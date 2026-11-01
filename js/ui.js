@@ -49,7 +49,7 @@ function renderProperty(p,autoPlay=false){
     <div class="property-row"><dt>Phương tiện:</dt><dd>${escapeHTML(p.vehicle)}</dd></div>
     <div class="property-row"><dt>Con cái:</dt><dd>${p.children}</dd></div></dl>
     <div class="year-controls">${manualButton}${autoButton}</div>
-    <p class="year-note">${!p.alive?'Một kiếp đã kết thúc — đầu thai lại để thử vận.':autoPlay?'⏱ Đang chạy: 5 giây / 1 năm · Biến cố được chọn ngẫu nhiên.':'Chế độ tự động sẽ tự chọn biến cố và qua năm sau mỗi 5 giây.'}</p>`;
+    <p class="year-note">${!p.alive?'Một kiếp đã kết thúc — đầu thai lại để thử vận.':autoPlay?'⏱ Đang chạy: 5 giây / 1 năm · Biến cố được chọn ngẫu nhiên.':'Tự động: 5 giây/tuổi, không hiện popup; kết quả lưu vào nhật ký.'}</p>`;
   $('property-panel').innerHTML=body;
   $('mobile-dock').innerHTML=`${manualButton}${autoButton}`;
 }
@@ -108,7 +108,7 @@ function renderOverlay(p,view){
   const modal=view.modal;
   if(modal==='archive')html=archiveListHTML();
   else if(modal==='archive-detail')html=archiveDetailHTML(view.archiveId);
-  else if(p.pendingEvent&&p.alive){
+  else if(p.pendingEvent&&p.alive&&!view.autoPlay){
     const e=p.pendingEvent;
     html=`<div class="modal-kicker">🎲 BIẾN CỐ NĂM ${p.age} TUỔI</div><h2>${escapeHTML(e.title)}</h2><p>${escapeHTML(e.description)}</p><div class="choice-stack">${e.choices.map((c,i)=>`<button type="button" class="choice-button" data-choice="${i}">${escapeHTML(c.label)}<span>${escapeHTML(c.hint||'Lựa chọn của mày sẽ tạo hậu quả.')}</span></button>`).join('')}</div>`;
   }else if(modal==='ranking')html=rankingHTML(view);

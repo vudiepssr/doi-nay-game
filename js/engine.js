@@ -116,6 +116,29 @@ export function advanceYear(state){
   saveGame(state);
   return {ok:true,died:false};
 }
+// Auto 5s/năm: giải quyết các lựa chọn NGAY TRONG MỘT LƯỢT xử lý.
+// Trình duyệt không bao giờ nhận trạng thái đang chờ lựa chọn giữa hai request.
+function autoResolveEvent(state){
+  const p=state.player;
+  const event=p.pendingEvent;
+  if(!event)return {ok:true};
+  if(!event.choices?.length)return {ok:false,message:'Biến cố không có đáp án hợp lệ.'};
+  // Ghi cả tình huống lẫn hậu quả để người chơi đọc được trong hồi ký.
+  addLog(p,`🎲 ${event.title}: ${event.description}`,'event');
+  const index=rand(0,event.choices.length-1);
+  return chooseEvent(state,index);
+}
+export function advanceYearAuto(state){
+  if(!state.player.alive)return {ok:false,message:'Kiếp này đã kết thúc.'};
+  // Xử lý sự kiện dở dang khi người chơi chuyển từ thủ công sang tự chạy.
+  if(state.player.pendingEvent){
+    const old=autoResolveEvent(state);
+    if(!old.ok || !state.player.alive)return old;
+  }
+  const result=advanceYear(state);
+  if(!result.ok || !state.player.alive)return result;
+  return autoResolveEvent(state);
+}
 export function chooseEvent(state,index){
   const p=state.player;
   if(!p.alive||!p.pendingEvent)return {ok:false};

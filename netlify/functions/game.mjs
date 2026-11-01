@@ -1,7 +1,7 @@
 // DỜI NÀY ONLINE API — server authoritative: no score is ever accepted from the browser.
 import {randomBytes,randomUUID,createHash,createHmac} from 'node:crypto';
 import {createPlayer} from '../../js/player.js';
-import {performAction,advanceYear,chooseEvent,setName} from '../../js/engine.js';
+import {performAction,advanceYear,advanceYearAuto,chooseEvent,setName} from '../../js/engine.js';
 import {CONFIG} from '../../js/config.js';
 
 export const config={path:'/api/game'};
@@ -110,7 +110,7 @@ function sameOrigin(req){
   try{return new URL(origin).host === new URL(req.url).host && new URL(origin).protocol==='https:';}
   catch{return false;}
 }
-const ACTIONS=new Set(['year','choice','action','rename','nickname','rebirth','tab']);
+const ACTIONS=new Set(['year','auto-year','choice','action','rename','nickname','rebirth','tab']);
 async function onCommand(req){
   if(!sameOrigin(req))return fail('Không cho phép yêu cầu từ website khác.',403);
   const length=Number(req.headers.get('content-length')||0);
@@ -144,6 +144,7 @@ async function onCommand(req){
   let result={ok:false,message:'Lệnh không hợp lệ'};
   switch(payload.command){
     case 'year': result=advanceYear(state);break;
+    case 'auto-year': result=advanceYearAuto(state);break;
     case 'choice':
       if(!Number.isInteger(payload.index)||payload.index<0||payload.index>20)return fail('Đáp án không hợp lệ');
       result=chooseEvent(state,payload.index);break;

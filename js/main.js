@@ -1,4 +1,4 @@
-import {loadGame,newGame,saveGame,performAction,advanceYear,chooseEvent,setName} from './engine.js';
+import {loadGame,newGame,saveGame,performAction,advanceYear,advanceYearAuto,chooseEvent,setName} from './engine.js';
 import {render,toast} from './ui.js';
 import {setOnlineBoards} from './leaderboard.js';
 import {archiveLife,getArchivedLife,setServerArchives,setServerLife} from './lifeArchive.js';
@@ -65,6 +65,7 @@ async function command(cmd,extra={}){
     }else{
       let result={ok:false,message:'Hành động không hợp lệ'};
       if(cmd==='year')result=advanceYear(state);
+      if(cmd==='auto-year')result=advanceYearAuto(state);
       if(cmd==='action')result=performAction(state,extra.actionId);
       if(cmd==='choice')result=chooseEvent(state,extra.index);
       if(cmd==='rename')result=setName(state,extra.value);
@@ -81,26 +82,22 @@ async function command(cmd,extra={}){
     return {ok:false};
   }finally{busy=false;}
 }
-async function resolveAutoEvent(){
-  const choices=state.player.pendingEvent?.choices;
-  if(choices?.length)await command('choice',{index:Math.floor(Math.random()*choices.length)});
-}
 async function autoNextYear(){
-  if(!autoRunning||busy||!state)return;
-  if(state.player.pendingEvent)await resolveAutoEvent();
-  if(!state.player.alive||!autoRunning)return;
-  const result=await command('year');
+  if(!autoRunning||busy||!state?.player?.alive)return;
+  // MỘT request server gồm qua năm + 2 biến cố phụ + bốc đáp án ngẫu nhiên.
+  // Không render trạng thái pendingEvent ở giữa, nên không nháy popup.
+  const result=await command('auto-year');
   if(!result.ok){stopAutoYear();paint();return;}
-  if(state.player.pendingEvent)await resolveAutoEvent();
-  if(!state.player.alive)stopAutoYear();
-  view.modal=null;paint();
+  if(!state.player.alive){stopAutoYear();paint();}
 }
-async function startAutoYear(){
+function startAutoYear(){
   if(!state.player.alive){toast('Kiếp này đã kết thúc!');return;}
-  if(state.player.pendingEvent)await resolveAutoEvent();
-  if(!state.player.alive)return;
-  autoRunning=true;autoTimer=setInterval(autoNextYear,AUTO_YEAR_INTERVAL_MS);
-  view.modal=null;paint();toast('▶ Tự chạy: 5 giây / 1 tuổi, biến cố được tự chọn.');
+  // Nếu có pendingEvent từ phiên bản cũ, lần tick đầu sẽ tự xử lý nó.
+  // Chỉ chế độ +1 tuổi thủ công mới mở popup để chọn.
+  autoRunning=true;
+  view.modal=null;
+  autoTimer=setInterval(autoNextYear,AUTO_YEAR_INTERVAL_MS);
+  paint();toast('▶ Đang tự qua năm: mỗi 5 giây, không hiện popup biến cố.');
 }
 function downloadLife(id){
   const life=getArchivedLife(id);
