@@ -1,0 +1,423 @@
+<!doctype html><html lang="vi"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="color-scheme" content="dark"/><title>ĐỜI NÀY — Hướng dẫn public từ A–Z</title><style>
+:root{color-scheme:dark;--bg:#0d1526;--panel:#17243b;--card:#202e48;--ink:#e8edf7;--dim:#a5b5ce;--accent:#46d7b0;--link:#90b8ff}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--ink);font:16px/1.72 system-ui,-apple-system,"Segoe UI",sans-serif;margin:0}header{position:sticky;top:0;z-index:4;background:rgba(13,21,38,.95);border-bottom:1px solid #2a3c59;padding:12px min(4vw,34px);display:flex;align-items:center;justify-content:space-between;gap:15px;backdrop-filter:blur(8px)}header strong{color:var(--accent)}header span{font-size:13px;color:var(--dim)}main{max-width:920px;margin:34px auto 90px;padding:0 20px}h1{font-size:clamp(28px,5vw,42px);line-height:1.17;margin:25px 0}h2{font-size:clamp(22px,3vw,28px);line-height:1.28;margin:43px 0 16px;padding:0 0 12px;border-bottom:1px solid #394860}h3{font-size:20px;color:var(--accent)}p,li{color:#d5deed}p{margin:14px 0}strong{color:#fff}a{color:var(--link);overflow-wrap:anywhere}a:hover{color:#c0d7ff}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#26334d;color:#bce1ff;border-radius:4px;padding:2px 5px;overflow-wrap:anywhere}pre{background:#0a1120;border:1px solid #303e59;padding:17px;border-radius:12px;overflow:auto;font-size:13px;line-height:1.55}pre code{padding:0;background:transparent;color:#bde5da}blockquote{background:#152d32;border-left:4px solid var(--accent);padding:10px 18px;margin:20px 0;border-radius:6px}table{width:100%;border-collapse:collapse;display:block;overflow:auto;font-size:14px;margin:15px 0}th,td{border:1px solid #35425c;text-align:left;vertical-align:top;padding:9px 11px}th{background:#223047;color:#fff}td{min-width:85px}hr{border:0;border-top:1px solid #2e3c56;margin:35px 0}li{padding-left:3px;margin:7px 0}input[type=checkbox]{accent-color:var(--accent)}.call{display:inline-flex;background:#185c4d;color:#b4ffeb;padding:4px 12px;border-radius:20px;font-size:13px;font-weight:bold}@media(max-width:540px){main{padding:0 15px}table{font-size:12px}th,td{padding:7px}}
+</style></head><body><header><strong>🎮 ĐỜI NÀY · PUBLIC v0.7</strong><span>Hướng dẫn tự làm từ A–Z</span></header><main><h1>ĐỜI NÀY v0.7 — HƯỚNG DẪN PUBLIC WEB TỪ A ĐẾN Z</h1>
+<p><strong>Mục tiêu:</strong> sau hướng dẫn này, bạn có 1 đường link kiểu <code>https://ten-game-cua-ban.netlify.app/</code>. Ai mở link cũng chơi, không cần đăng ký tài khoản. <strong>Cả 4 Top (Giàu, Tuổi, Trái ngang, IQ) dùng chung Supabase</strong>, không phải mỗi máy một bảng.</p>
+<p><strong>Phù hợp:</strong> máy tính Windows, người chưa từng triển khai website. <strong>Không cần</strong> cài Node.js, Python, Visual Studio Code hay thuê VPS. Tất cả làm bằng trình duyệt, trừ việc giải nén và chọn file.</p>
+<blockquote>
+<p>Chưa có website online được tạo sẵn. Để có URL thật, CHỦ WEBSITE phải tạo dự án Supabase + GitHub + Netlify trong tài khoản của mình. Đừng gửi mật khẩu/secret key cho người khác.</p>
+</blockquote>
+<hr />
+<h2>A. Nhớ 3 thứ này trước khi làm</h2>
+<table>
+<thead>
+<tr>
+  <th>Dịch vụ</th>
+  <th>Dùng để làm gì?</th>
+  <th>Link</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>Supabase</strong></td>
+  <td>Chứa dữ liệu người chơi, kiếp đã chết, 4 Top toàn quốc</td>
+  <td><a href="https://supabase.com/dashboard">https://supabase.com/dashboard</a></td>
+</tr>
+<tr>
+  <td><strong>GitHub</strong></td>
+  <td>Chứa mã nguồn game để cập nhật phiên bản</td>
+  <td><a href="https://github.com">https://github.com</a></td>
+</tr>
+<tr>
+  <td><strong>Netlify</strong></td>
+  <td>Host web và chạy máy chủ xử lý game, cấp URL <code>.netlify.app</code></td>
+  <td><a href="https://app.netlify.com/">https://app.netlify.com/</a></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Ba điểm dễ nhầm:</strong></p>
+<ol>
+<li><code>index.html</code> là <strong>website online</strong>. Mở trên Netlify, game mới nói chuyện với database chung.</li>
+<li><code>play.html</code> là bản <strong>chơi thử offline</strong> trong ZIP. Đừng đưa đường dẫn này cho người chơi để tranh Top quốc gia.</li>
+<li><strong>Không chỉ kéo <code>index.html</code> hoặc thư mục <code>public/</code> lên Netlify Drop</strong>. Game này có backend. Cách dễ nhất và ổn nhất là <strong>GitHub → Netlify (Import an existing project)</strong>.</li>
+</ol>
+<hr />
+<h2>B. BƯỚC 1 — Tải game, giải nén đúng cách</h2>
+<ol>
+<li>Tải file <code>DOI-NAY-v0.7-PUBLIC-READY.zip</code> được cung cấp cùng hướng dẫn này.</li>
+<li>Trên Windows, tìm file ở thư mục Downloads/Tải xuống.</li>
+<li>Bấm chuột phải vào ZIP → <strong>Extract All... / Giải nén tất cả</strong> → <strong>Extract</strong>.</li>
+<li>Mở thư mục vừa giải nén tên <code>DOI-NAY-v0.7-PUBLIC</code>.</li>
+<li>Ở ngay bên trong cần nhìn thấy những file/thư mục sau (đừng sửa nội dung):</li>
+</ol>
+<pre><code class="language-text">DOI-NAY-v0.7-PUBLIC/
+  index.html
+  netlify.toml           ← CỰC KỲ QUAN TRỌNG
+  package.json
+  build.py
+  js/
+    main.js
+    events.js
+    customEvents.js      ← Chỗ tự thêm sự kiện
+    ...
+  css/
+    style.css
+  netlify/
+    functions/
+      game.mjs           ← SERVER tính IQ, tuổi, tiền và ghi Top
+  supabase/
+    schema.sql           ← Tạo bảng trên Supabase
+  HUONG-DAN-PUBLIC-ONLINE.md
+  play.html             ← Chỉ để test OFFLINE trên máy
+</code></pre>
+<p><strong>Nếu không thấy <code>netlify.toml</code> ở cùng cấp với <code>index.html</code>, bạn đang mở sai cấp thư mục.</strong></p>
+<hr />
+<h2>C. BƯỚC 2 — Tạo database Supabase</h2>
+<ol>
+<li>Mở <a href="https://supabase.com/dashboard">https://supabase.com/dashboard</a> → đăng ký/đăng nhập (có thể dùng GitHub hoặc email).</li>
+<li>Trong Dashboard chọn <strong>New project</strong> (có thể phải tạo Organization trước).</li>
+<li>Đặt tên, ví dụ: <code>doi-nay-online</code>.</li>
+<li>Tạo <strong>Database password</strong> thật mạnh và lưu ở nơi an toàn. Password này khác <strong>Secret API key</strong> sắp lấy ở bước 4; đừng nhầm.</li>
+<li>Chọn region gần người chơi Việt Nam, ví dụ <strong>Singapore</strong> nếu có; chọn gói phù hợp (có thể bắt đầu ở Free).</li>
+<li>Bấm <strong>Create new project</strong>. Đợi dashboard báo project sẵn sàng.</li>
+<li>Không cần bật Supabase Auth/Anonymous Auth trong giao diện. Bản code này <strong>tự cấp Guest ID bằng cookie HttpOnly trên Netlify</strong>, không cần khách đăng nhập và không cần cấu hình Supabase Auth.</li>
+</ol>
+<p><strong>Lưu ý:</strong> Gói Free có hạn mức; khi ít hoạt động có thể bị pause. Nếu project bị pause, game sẽ không kết nối được database cho tới khi project hoạt động lại.</p>
+<hr />
+<h2>D. BƯỚC 3 — Chạy SQL tạo 4 Top chung</h2>
+<ol>
+<li>Trong Supabase project, thanh trái chọn <strong>SQL Editor</strong>.</li>
+<li>Bấm <strong>New query</strong>.</li>
+<li>Trên máy, mở file <code>supabase/schema.sql</code> bằng Notepad hoặc Visual Studio Code.</li>
+<li>Nhấn <strong>Ctrl+A</strong> rồi <strong>Ctrl+C</strong> để copy <strong>TOÀN BỘ</strong> nội dung. Không bỏ sót đoạn cuối có <code>game_allow_guest_ip</code>.</li>
+<li>Quay lại <strong>SQL Editor</strong>, dán bằng <strong>Ctrl+V</strong>.</li>
+<li>Bấm <strong>Run</strong> (hoặc Ctrl+Enter nếu giao diện hỗ trợ).</li>
+<li>Nếu chạy đúng, hiện <strong>Success. No rows returned</strong> hoặc thông báo chạy thành công.</li>
+<li>Kiểm tra <strong>Table Editor</strong> (hoặc Database → Tables), sẽ thấy ít nhất 4 bảng:<ul>
+<li><code>game_guests</code></li>
+<li><code>game_runs</code></li>
+<li><code>game_scores</code></li>
+<li><code>game_guest_limits</code></li>
+<li>Và bảng <code>game_guest_ip_limits</code> (ngăn spam tạo khách)</li>
+</ul>
+</li>
+<li><strong>Chỉ chạy bản SQL này trên project mới/không có dữ liệu quan trọng.</strong> Nếu bạn đã triển khai bản trước, tạo bản sao lưu và rà soát migration trước khi áp dụng thay đổi.</li>
+</ol>
+<p><strong>Chưa có Top nào là bình thường.</strong> Bảng <code>game_scores</code> sẽ có dữ liệu khi có nhân vật <strong>chết</strong> (không phải ngay khi mới vào game).</p>
+<hr />
+<h2>E. BƯỚC 4 — Lấy ĐÚNG hai thông số Supabase</h2>
+<p>Trong Supabase project:</p>
+<ol>
+<li>Để lấy URL: mở <strong>Connect</strong> (hoặc Project Settings → API nếu dashboard của bạn còn mục đó), tìm <strong>Project URL</strong> dạng:
+<code>https://abcdefghijk.supabase.co</code></li>
+<li>Để lấy Secret Key: <strong>Settings → API Keys</strong> → phần <strong>Publishable and secret API keys</strong>, chọn <strong>Secret key</strong> có dạng <code>sb_secret_...</code>. Nếu dashboard yêu cầu tạo Secret key, tạo một key dành riêng cho game.</li>
+<li>Giữ hai giá trị trong password manager hoặc một nơi bí mật trên máy <strong>chỉ để nhập vào Netlify ở bước 7</strong>.</li>
+</ol>
+<table>
+<thead>
+<tr>
+  <th>Biến Netlify</th>
+  <th>Giá trị</th>
+  <th>Cách nhận biết</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>SUPABASE_URL</code></td>
+  <td>Project URL</td>
+  <td>Bắt đầu <code>https://</code> và kết thúc <code>.supabase.co</code></td>
+</tr>
+<tr>
+  <td><code>SUPABASE_SECRET_KEY</code></td>
+  <td>Secret API key</td>
+  <td>Bắt đầu bằng <code>sb_secret_</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>TUYỆT ĐỐI KHÔNG</strong> chép key bí mật vào <code>index.html</code>, <code>js/</code>, <code>netlify.toml</code>, GitHub, đoạn chat hay ảnh chụp màn hình. <strong>KHÔNG dùng</strong> <code>sb_publishable_...</code> thay cho Secret Key: game sẽ không ghi bảng Top được. Supabase đang chuyển sang key mới, nên ưu tiên <code>sb_secret_...</code> thay vì legacy <code>eyJ...</code>.</p>
+<hr />
+<h2>F. BƯỚC 5 — Tạo kho GitHub</h2>
+<ol>
+<li>Truy cập <a href="https://github.com/">https://github.com/</a> → đăng ký/đăng nhập.</li>
+<li>Bấm nút <code>+</code> (thường góc trên phải) → <strong>New repository</strong> hoặc vào <a href="https://github.com/new">https://github.com/new</a>.</li>
+<li><strong>Repository name</strong>: ví dụ <code>doi-nay-game</code>.</li>
+<li>Chọn <strong>Private</strong> hoặc <strong>Public</strong> đều được. <strong>Private repo không có nghĩa game website phải private</strong>; Netlify vẫn có thể phát game công khai nếu bạn cấp quyền import repo.</li>
+<li>Để tránh xung đột, lúc này <strong>không chọn</strong> thêm README, <code>.gitignore</code>, License tự động (source đã có các file cần thiết).</li>
+<li>Bấm <strong>Create repository</strong>.</li>
+<li>Trên trang repository mới, chọn <strong>uploading an existing file</strong>, hoặc <strong>Add file → Upload files</strong>.</li>
+<li>Mở thư mục <code>DOI-NAY-v0.7-PUBLIC</code> đã giải nén bằng Windows Explorer.</li>
+<li>Chọn <strong>toàn bộ NỘI DUNG bên trong thư mục</strong> (Ctrl+A), kéo thả vào khu vực Upload files trên GitHub. <strong>Đừng kéo thêm một cấp thư mục mẹ</strong> khiến GitHub thành <code>DOI-NAY-v0.7-PUBLIC/netlify.toml</code> thay vì <code>netlify.toml</code> ở gốc repo.</li>
+<li>Đợi upload hoàn tất. Gõ commit message <code>Public game v0.7</code> rồi chọn <strong>Commit changes</strong> / <strong>Commit directly to main</strong>.</li>
+<li>Tại trang chính repository, kiểm tra các mục sau nằm ngay ở <strong>gốc repo</strong>:<ul>
+<li><code>netlify.toml</code></li>
+<li><code>index.html</code></li>
+<li><code>build.py</code></li>
+<li><code>js/</code> và <code>css/</code></li>
+<li><code>netlify/functions/game.mjs</code></li>
+<li><code>supabase/schema.sql</code></li>
+</ul>
+</li>
+<li>Nếu lỡ upload nhầm thành một thư mục con: <strong>đừng deploy vội</strong>. Đưa nội dung ra gốc hoặc cấu hình Base Directory riêng (đối với người mới, đưa ra gốc dễ hơn).</li>
+</ol>
+<p>Không upload <code>.env</code> chứa thông tin thật. Trong ZIP có <code>.env.example</code> <strong>chỉ chứa placeholder giả</strong>, không phải khóa của bạn. GitHub có giới hạn tải lên bằng trình duyệt (100 file/lần); bản game này ít hơn giới hạn.</p>
+<hr />
+<h2>G. BƯỚC 6 — Import từ GitHub vào Netlify</h2>
+<ol>
+<li><p>Mở <a href="https://app.netlify.com/">https://app.netlify.com/</a> → đăng ký/đăng nhập. Nên đăng nhập GitHub cho tiện.</p>
+</li>
+<li><p>Chọn <strong>Add new project → Import an existing project</strong> hoặc vào <a href="https://app.netlify.com/start">https://app.netlify.com/start</a> và tìm phần nhập repository.</p>
+</li>
+<li><p>Chọn <strong>GitHub</strong> → cấp quyền truy cập nếu được hỏi.</p>
+</li>
+<li><p>Chọn repo <code>doi-nay-game</code> vừa tạo. Nếu không hiện, xem lại quyền truy cập GitHub mà Netlify đã được cấp.</p>
+</li>
+<li><p>Tại màn hình thiết lập deploy, kiểm tra:</p>
+<p>| Trường | Giá trị phải là |
+|---|---|
+| Base directory | Để trống / gốc repo |
+| Build command | <code>python3 build.py</code> |
+| Publish directory | <code>public</code> |
+| Functions directory | <code>netlify/functions</code> (được đặt ở <code>netlify.toml</code>) |
+| Production branch | <code>main</code> |</p>
+</li>
+<li><p>File <code>netlify.toml</code> trong repo đã cấu hình build command, publish folder và đường dẫn Functions. Nếu Netlify hiển thị các giá trị này thì giữ nguyên.</p>
+</li>
+<li><p>Bấm <strong>Deploy</strong> hoặc <strong>Publish</strong> tùy giao diện. Chờ Deploy log hoàn tất.</p>
+</li>
+<li><p>Khi deploy thành công, Netlify cấp 1 site URL ví dụ <code>https://doi-nay-demo-123.netlify.app</code> (<strong>URL ví dụ; không phải website thật đã được tạo</strong>).</p>
+</li>
+<li><p>Nếu mở trang mà thấy báo <strong>Chưa kết nối được ĐỜI NÀY Online</strong>, điều đó bình thường khi <strong>chưa thêm 2 environment variables</strong> ở bước 7.</p>
+</li>
+</ol>
+<p><strong>Quan trọng:</strong> Deploy thành công frontend không có nghĩa database kết nối thành công. Phải làm thêm bước 7 và 8.</p>
+<hr />
+<h2>H. BƯỚC 7 — Gắn Supabase vào Netlify (bắt buộc)</h2>
+<ol>
+<li>Vào <strong>Netlify → chọn project game</strong>.</li>
+<li>Chọn <strong>Project configuration → Environment variables</strong> (hoặc mục tên gần tương đương, giao diện Netlify có thể đổi).</li>
+<li>Chọn <strong>Add a variable / Add environment variable</strong>.</li>
+<li>Tạo biến thứ nhất:<ul>
+<li><strong>Key:</strong> <code>SUPABASE_URL</code></li>
+<li><strong>Value:</strong> chính xác Project URL Supabase ở bước 4, ví dụ <code>https://abcdefghijk.supabase.co</code>.</li>
+</ul>
+</li>
+<li>Tạo biến thứ hai:<ul>
+<li><strong>Key:</strong> <code>SUPABASE_SECRET_KEY</code></li>
+<li><strong>Value:</strong> chính xác Secret Key bắt đầu <code>sb_secret_...</code>.</li>
+</ul>
+</li>
+<li>Nếu màn hình có tùy chọn <strong>Scopes</strong>, phải chọn <strong>Functions</strong> (hoặc <strong>All scopes</strong>). Đừng chỉ chọn <strong>Builds</strong>. Nếu có <strong>Deploy contexts</strong>, đảm bảo có <strong>Production</strong> (hoặc All contexts).</li>
+<li>Khi thêm Secret Key, chọn chế độ <strong>Secret / sensitive</strong> nếu giao diện cho phép, để hạn chế hiển thị lại giá trị.</li>
+<li><strong>Save</strong>.</li>
+<li>Vào <strong>Deploys</strong> → <strong>Trigger deploy / Deploy project / Retry deployment</strong> để tạo một bản deploy <strong>mới</strong>, vì thay đổi env cần deploy lại để Function nhận giá trị mới.</li>
+<li>Chờ trạng thái cuối cùng là <strong>Published / Production deploy successful</strong>. Đừng gửi key bí mật cho bất cứ ai để nhờ “sửa hộ”.</li>
+</ol>
+<blockquote>
+<p>Hai biến này chỉ được đọc trong <code>netlify/functions/game.mjs</code> ở server. Frontend gửi lệnh tới <code>/api/game</code>; browser <strong>không bao giờ</strong> cần truy cập Supabase trực tiếp.</p>
+</blockquote>
+<hr />
+<h2>I. BƯỚC 8 — Đặt site ở chế độ PUBLIC (dễ bị bỏ quên nhất)</h2>
+<p>Từ năm 2026, một số tài khoản/team Netlify mới mặc định project là <strong>Private</strong>. Site deploy thành công nhưng người ngoài vẫn có thể bị yêu cầu đăng nhập Netlify.</p>
+<ol>
+<li>Vào Netlify project của game.</li>
+<li>Tìm <strong>Project configuration → General → Visitor access → Project visibility</strong>.</li>
+<li>Chọn <strong>Edit visibility / Make public</strong>.</li>
+<li>Chọn <strong>Public</strong> cho <strong>Production deploy</strong>, <strong>Save</strong>.</li>
+<li>Mở trình duyệt <strong>Ẩn danh (Incognito)</strong> hoặc mượn điện thoại không đăng nhập Netlify, vào URL <code>.netlify.app</code>.</li>
+<li>Nếu người lạ <strong>thấy được game mà không cần đăng nhập Netlify</strong>, site mới thực sự public.</li>
+</ol>
+<p>Tài khoản GitHub repo vẫn có thể <strong>Private</strong>, miễn Netlify có quyền đọc repo khi build. Còn website đang chạy Netlify phải có quyền truy cập <strong>Public</strong>.</p>
+<hr />
+<h2>J. BƯỚC 9 — Test server thật bằng URL công khai</h2>
+<p>Giả sử địa chỉ Netlify <strong>THỰC TẾ CỦA BẠN</strong> là <code>https://ten-game.netlify.app</code>.</p>
+<h3>Test A — Đường dẫn Health (phải test đầu tiên)</h3>
+<p>Trên trình duyệt, mở đúng URL:</p>
+<pre><code class="language-text">https://ten-game.netlify.app/api/game?view=health
+</code></pre>
+<p><strong>Thay <code>ten-game.netlify.app</code> bằng địa chỉ thật của bạn.</strong> Nếu mọi thứ đúng, trình duyệt trả JSON tương tự:</p>
+<pre><code class="language-json">{
+  &quot;ok&quot;: true,
+  &quot;service&quot;: &quot;doi-nay-online&quot;,
+  &quot;database&quot;: &quot;connected&quot;,
+  &quot;leaderboards&quot;: {&quot;rich&quot;: 0, &quot;old&quot;: 0, &quot;absurd&quot;: 0, &quot;iq&quot;: 0}
+}
+</code></pre>
+<p>Bốn số 0 nghĩa là <strong>chưa có kiếp chết</strong>, KHÔNG phải lỗi. Nếu thấy <code>ok: true</code>, Function đã gọi được RPC của Supabase. <strong>Không đăng điểm giả vào Top chỉ để test</strong> vì sẽ phá độ công bằng.</p>
+<h3>Test B — API của bốn Top</h3>
+<p>Mở:</p>
+<pre><code class="language-text">https://ten-game.netlify.app/api/game?view=boards
+</code></pre>
+<p>Phải thấy JSON <code>ok: true</code>, có 4 mảng <code>rich</code>, <code>old</code>, <code>absurd</code>, <code>iq</code>.</p>
+<h3>Test C — Vào chơi thật</h3>
+<ol>
+<li>Vào <code>https://ten-game.netlify.app/</code>.</li>
+<li>Thấy giao diện ĐỜI NÀY, tên nhân vật random và tuổi 0.</li>
+<li>Góc trên phải có trạng thái <strong>🌏 Top toàn quốc</strong>.</li>
+<li>Đổi biệt danh khách, ví dụ <code>Trùm Nhân Phẩm</code>.</li>
+<li>Bấm <strong>+1 tuổi</strong> hoặc <strong>▶ Tự động (5s/năm)</strong>; mỗi năm có 2 biến cố phụ và một biến cố có lựa chọn.</li>
+<li>Để nhân vật sống tới lúc chết; khi chết server mới ghi <code>game_scores</code>.</li>
+<li>Mở bảng Top và xem hồi ký. Kết quả xếp hạng phải giữ lại sau khi refresh trang.</li>
+</ol>
+<h3>Test D — Hai người cùng bảng xếp hạng</h3>
+<ol>
+<li>Sau khi đã có ít nhất 1 nhân vật chết, mở <strong>điện thoại khác</strong>, ẩn danh hoặc trình duyệt khác.</li>
+<li>Vào <strong>CHÍNH CÙNG URL</strong>.</li>
+<li>Mở <strong>🏆 Top IQ</strong>, <strong>Top Giàu</strong>, <strong>Top Tuổi Cao</strong>, <strong>Top Trái Ngang</strong>.</li>
+<li>Cùng một nhân vật đã chết sẽ xuất hiện giống nhau trên hai máy (nếu lọt Top 100).</li>
+<li>Máy thứ 2 có Guest ID riêng; không dùng chung tiến trình chơi, nhưng <strong>dùng chung 4 bảng Top</strong>.</li>
+</ol>
+<h3>Test E — Đảm bảo site không hiển thị điểm fake</h3>
+<ul>
+<li>Không dùng <code>play.html</code> online: bản build v0.7 <strong>không xuất bản</strong> <code>/play.html</code>.</li>
+<li>Người chơi chỉ gửi hành động; server tự random đầu thai và tính các chỉ số.</li>
+<li>Chưa có anti-cheat tuyệt đối: bot vẫn có thể tạo nhiều lượt chơi hợp lệ, giới hạn guest IP chỉ giảm spam cơ bản.</li>
+</ul>
+<hr />
+<h2>K. BƯỚC 10 — Đổi tên URL game (không phải mua domain)</h2>
+<ol>
+<li>Vào Netlify project.</li>
+<li>Tìm <strong>Project configuration / General / Project details / Change project name</strong> hoặc nút <strong>Make public</strong> có gợi ý đổi tên dự án.</li>
+<li>Đặt tên miền phụ ngắn, dễ nhớ, ví dụ <code>doi-nay-lifesim-vn</code> nếu chưa ai dùng.</li>
+<li>Site sẽ có link kiểu <code>https://doi-nay-lifesim-vn.netlify.app/</code> (<strong>chỉ là ví dụ</strong>).</li>
+<li>Thử lại <code>/api/game?view=health</code> trên <strong>URL mới</strong>.</li>
+<li>Gửi link thật lên Facebook/TikTok/Discord. <strong>Không phải</strong> chia sẻ link Dashboard Supabase hoặc link GitHub repository.</li>
+</ol>
+<hr />
+<h2>L. BƯỚC 11 — Sau này tự thêm sự kiện và cập nhật trang web</h2>
+<ol>
+<li>Trên GitHub, vào repo → thư mục <code>js</code> → chọn <code>customEvents.js</code>.</li>
+<li>Bấm biểu tượng <strong>bút chì / Edit</strong> (nếu cần bật chế độ chỉnh sửa).</li>
+<li>Thêm sự kiện vào mảng tương ứng theo file <code>HUONG-DAN-THEM-SU-KIEN.md</code>; giữ đúng dấu phẩy, ngoặc nhọn và cấu trúc JavaScript.</li>
+<li>Bấm <strong>Commit changes</strong>.</li>
+<li>Netlify liên kết với GitHub sẽ <strong>tự deploy bản mới</strong>; không phải tạo URL mới.</li>
+<li>Sau khi deploy thành công, refresh trang game và test lại <code>/api/game?view=health</code>.</li>
+<li>Kho sự kiện chạy trên server được deploy cùng bản code mới; client chỉ hiển thị các biến cố server trả về.</li>
+</ol>
+<p><strong>Nếu sửa mã ở máy thay vì trên GitHub:</strong> phải upload/commit source mới lên <strong>đúng repository</strong> đang được Netlify kết nối; sửa file trong ZIP trên máy không tự cập nhật web.</p>
+<hr />
+<h2>M. BẢNG SỬA LỖI CỤ THỂ</h2>
+<table>
+<thead>
+<tr>
+  <th>Hiện tượng</th>
+  <th>Nguyên nhân thường gặp</th>
+  <th>Cách sửa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Mở site bị bắt đăng nhập Netlify</td>
+  <td>Site còn <strong>Private</strong></td>
+  <td>Bước 8: Project visibility → <strong>Public</strong></td>
+</tr>
+<tr>
+  <td>Trang trắng / 404 <code>index.html</code></td>
+  <td>Upload nhầm một cấp thư mục hoặc Publish sai</td>
+  <td>Kiểm tra <code>netlify.toml</code> ở gốc repo; build=<code>python3 build.py</code>, publish=<code>public</code>, xem Deploy logs</td>
+</tr>
+<tr>
+  <td><code>/api/game?view=health</code> trả 404 HTML</td>
+  <td>Function chưa deploy</td>
+  <td>Kiểm tra <code>netlify/functions/game.mjs</code> có trong repo và build functions thành công</td>
+</tr>
+<tr>
+  <td>Health trả <code>503</code> và báo thiếu cấu hình</td>
+  <td>Chưa đặt env cho <strong>Functions</strong></td>
+  <td>Kiểm tra <code>SUPABASE_URL</code>, <code>SUPABASE_SECRET_KEY</code>, scopes, rồi <strong>redeploy</strong></td>
+</tr>
+<tr>
+  <td>Health trả <code>503</code> và báo database</td>
+  <td>SQL chưa Run, sai key, project Supabase paused, sai URL</td>
+  <td>Chạy toàn bộ <code>schema.sql</code>, kiểm tra Secret Key, tình trạng Supabase và log Function</td>
+</tr>
+<tr>
+  <td>Health báo đang dùng Publishable Key</td>
+  <td>Dán nhầm <code>sb_publishable_</code></td>
+  <td>Thay bằng <code>sb_secret_...</code> trong Netlify rồi deploy lại</td>
+</tr>
+<tr>
+  <td>Function báo quyền <code>permission denied</code></td>
+  <td>Thiếu GRANT / SQL chạy chưa hết</td>
+  <td>Kiểm tra <code>schema.sql</code> chạy thành công đến dòng cuối và key là Secret Key</td>
+</tr>
+<tr>
+  <td><code>Unexpected token &lt;</code> / trả HTML ở API</td>
+  <td>API request bị trỏ đến static web do function thiếu</td>
+  <td>Kiểm tra deploy Functions và đường dẫn <code>/api/game</code></td>
+</tr>
+<tr>
+  <td>Top vẫn rỗng dù đã chơi vài năm</td>
+  <td>Chưa có kiếp nào <strong>chết</strong></td>
+  <td>Chơi tới Game Over; 1 kiếp chết mới sinh 1 bản ghi điểm</td>
+</tr>
+<tr>
+  <td>Hai máy thấy Top khác nhau</td>
+  <td>Đang mở <strong>hai URL</strong> khác nhau hoặc hai project Supabase khác nhau</td>
+  <td>Dùng chung 1 URL production và 1 database; reload Top</td>
+</tr>
+<tr>
+  <td><code>409</code> “Trạng thái đã đổi ở tab khác”</td>
+  <td>Hai tab dùng chung Guest ID, đồng thời gửi lệnh</td>
+  <td>Refresh tab để lấy trạng thái server mới nhất</td>
+</tr>
+<tr>
+  <td><code>429</code> “Thao tác quá nhanh”</td>
+  <td>Chặn spam request</td>
+  <td>Giảm tốc; chờ hết cửa sổ giới hạn. Không lạm dụng tự tạo Guest mới</td>
+</tr>
+<tr>
+  <td>Thay đổi sự kiện mà web chưa đổi</td>
+  <td>Sửa file trên máy nhưng chưa commit hoặc deploy lỗi</td>
+  <td>Commit <code>js/customEvents.js</code> lên GitHub; xem trạng thái deploy Netlify</td>
+</tr>
+<tr>
+  <td>Đổi máy mất danh sách kiếp</td>
+  <td>Guest ID cookie nằm ở trình duyệt cũ</td>
+  <td>Với bản không đăng nhập không thể đồng bộ danh tính qua thiết bị; thành tích Top công khai vẫn còn</td>
+</tr>
+<tr>
+  <td>Top từng chạy rồi hôm sau báo lỗi</td>
+  <td>Supabase Free project bị pause do ít hoạt động</td>
+  <td>Mở Supabase Dashboard kiểm tra trạng thái và khôi phục; xem quota/usage</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Xem log backend:</strong> vào Netlify project → <strong>Logs</strong> / <strong>Functions → game</strong> (tùy giao diện), tìm dòng <code>Database error</code>, <code>Game API</code>. Không đăng công khai log chứa khóa bí mật.</p>
+<hr />
+<h2>N. Những hạn chế cần biết trước khi quảng bá lớn</h2>
+<ul>
+<li><strong>Không cần login</strong>: mỗi trình duyệt giữ cookie <code>HttpOnly</code> để tiếp tục cùng Guest ID; xóa cookie/đổi thiết bị sẽ tạo người chơi khách mới. Không thể bảo đảm lấy lại tiến trình của khách không có tài khoản.</li>
+<li><strong>Top 4 bảng toàn quốc</strong>: mọi người trên <strong>cùng website kết nối cùng Supabase project</strong> dùng chung bảng xếp hạng; mỗi kiếp chết đủ điều kiện xét cả 4 bảng.</li>
+<li><strong>Top 100</strong>: chỉ hiển thị 100 người đứng đầu ở mỗi mục. Xem thứ hạng cá nhân trên màn hình tử vong.</li>
+<li><strong>Chống gian lận</strong>: server tự xử lý hành động, từ chối gửi IQ/tiền giả. Đã có giới hạn hành động 90/phút/guest và giới hạn tạo khách ~60/giờ/IP. <strong>Chưa có giải pháp chống bot hoàn toàn</strong>. Trước khi chạy chiến dịch lớn, nên bổ sung challenge/Turnstile, giám sát lạm dụng và báo cáo tên người chơi.</li>
+<li><strong>Dữ liệu</strong>: server lưu tiến trình và hồi ký. Người chơi có thể tự xuất hồi ký. Cân nhắc chính sách quyền riêng tư, thời hạn lưu dữ liệu và cơ chế sao lưu khi vận hành thực tế.</li>
+<li><strong>Chi phí</strong>: Netlify và Supabase có hạn mức gói miễn phí, không bảo đảm chịu tải lớn mà không phát sinh phí hoặc bị giới hạn. Theo dõi Usage/Billing ở cả hai dịch vụ.</li>
+<li><strong>Không có website đã triển khai sẵn trong ZIP</strong>. Chỉ sau khi chủ website thực hiện các bước trên mới có URL public thật.</li>
+</ul>
+<hr />
+<h2>O. Checklist cuối — chỉ phát link khi tất cả đều đạt</h2>
+<ul>
+<li class="task-list-item"><input class="task-list-item-checkbox" type="checkbox" disabled/>GitHub repo có <code>netlify.toml</code> và <code>netlify/functions/game.mjs</code> ở đúng đường dẫn</li>
+<li class="task-list-item"><input class="task-list-item-checkbox" type="checkbox" disabled/>Supabase chạy thành công toàn bộ <code>schema.sql</code></li>
+<li class="task-list-item"><input class="task-list-item-checkbox" type="checkbox" disabled/>Netlify Deploy báo <strong>Published</strong></li>
+<li class="task-list-item"><input class="task-list-item-checkbox" type="checkbox" disabled/>Netlify <code>SUPABASE_URL</code> đúng Project URL</li>
+<li class="task-list-item"><input class="task-list-item-checkbox" type="checkbox" disabled/>Netlify <code>SUPABASE_SECRET_KEY</code> đúng <strong>Secret Key</strong>, scope có Functions</li>
+<li class="task-list-item"><input class="task-list-item-checkbox" type="checkbox" disabled/>Tạo deploy mới sau khi nhập env</li>
+<li class="task-list-item"><input class="task-list-item-checkbox" type="checkbox" disabled/><code>https://URL-THAT/api/game?view=health</code> trả <code>ok:true</code>, <code>database:connected</code></li>
+<li class="task-list-item"><input class="task-list-item-checkbox" type="checkbox" disabled/>Website visibility <strong>Public</strong> (ẩn danh vẫn truy cập được)</li>
+<li class="task-list-item"><input class="task-list-item-checkbox" type="checkbox" disabled/>Game chạy trên điện thoại: đầu thai, bấm tăng tuổi, tự động 5 giây</li>
+<li class="task-list-item"><input class="task-list-item-checkbox" type="checkbox" disabled/>Kiếp chết ghi vào <strong>cả 4 bảng Top</strong> chung</li>
+<li class="task-list-item"><input class="task-list-item-checkbox" type="checkbox" disabled/>Máy thứ hai nhìn thấy bảng Top giống máy đầu tiên</li>
+<li class="task-list-item"><input class="task-list-item-checkbox" type="checkbox" disabled/>Hồi ký kiếp cũ còn sau khi reload</li>
+<li class="task-list-item"><input class="task-list-item-checkbox" type="checkbox" disabled/>Không đăng Supabase Secret Key lên GitHub</li>
+</ul>
+<h3>Các tài liệu chính thức để tự đối chiếu</h3>
+<ul>
+<li>Netlify import repository: <a href="https://docs.netlify.com/manage/projects/add-new-project/">https://docs.netlify.com/manage/projects/add-new-project/</a></li>
+<li>Netlify environment variables trong Function: <a href="https://docs.netlify.com/build/functions/environment-variables/">https://docs.netlify.com/build/functions/environment-variables/</a></li>
+<li>Netlify project visibility: <a href="https://docs.netlify.com/manage/security/secure-access-to-sites/project-visibility/">https://docs.netlify.com/manage/security/secure-access-to-sites/project-visibility/</a></li>
+<li>Supabase API Keys: <a href="https://supabase.com/docs/guides/getting-started/api-keys">https://supabase.com/docs/guides/getting-started/api-keys</a></li>
+<li>GitHub upload file: <a href="https://docs.github.com/en/repositories/working-with-files/managing-files/adding-a-file-to-a-repository">https://docs.github.com/en/repositories/working-with-files/managing-files/adding-a-file-to-a-repository</a></li>
+</ul>
+<p><strong>Kết thúc:</strong> ai có URL <code>.netlify.app</code> public đều chơi, không đăng ký; thành tích được server ghi chung khi chết, có 4 bảng Top quốc gia. Nếu đến bước nào bị lỗi, gửi ảnh trang đó và dòng lỗi <strong>nhưng che tất cả mật khẩu/Secret Key</strong>.</p>
+</main></body></html>

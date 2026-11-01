@@ -1,0 +1,1309 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1324" />
+  <meta name="description" content="Đời Này — game mô phỏng cuộc đời, đầu thai ngẫu nhiên và sống với lựa chọn của mình." />
+  <title>ĐỜI NÀY — Game mô phỏng cuộc đời</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap');
+:root{color-scheme:dark;--bg:#0b1324;--panel:#1a2638;--panel-2:#111b2d;--card:#101a2c;--border:#2b3850;--line:#29364a;--text:#e9edf5;--muted:#97a5ba;--primary:#5b50ed;--primary-2:#8b83ff;--green:#14d5a0;--blue:#40baf7;--pink:#fa5b83;--yellow:#ffca39;--purple:#c478ff;--radius:19px; font-family:'Be Vietnam Pro',Inter,system-ui,-apple-system,sans-serif}
+*{box-sizing:border-box} html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5}button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.48}button:focus-visible,input:focus-visible{outline:2px solid #85a4ff;outline-offset:3px}::selection{background:#4e4ee2;color:white}
+#app{max-width:1630px;margin:auto;padding:12px 16px 22px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:58px;margin-bottom:16px}.brand{display:flex;align-items:center;gap:8px;font-size:19px;font-weight:900;letter-spacing:.05em}.brand strong{color:#61e1d1}.brand-icon{display:grid;place-items:center;width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#6057fa,#19c2ab);font-size:22px;color:white}.brand-label{font-size:10px;letter-spacing:.14em;color:#8a99b5;border-left:1px solid #44536c;padding-left:11px;margin-left:4px;font-weight:700}.top-actions{display:flex;align-items:center;gap:10px}.life-chip{border:1px solid #324160;color:#97a8c9;background:#182338;border-radius:10px;padding:8px 12px;font-size:11px;font-weight:800;letter-spacing:.07em}.ghost-button{border:1px solid #35445e;background:#1b2940;color:#dce4f6;border-radius:10px;padding:9px 14px;font-weight:700}.ghost-button:hover{background:#283958}.layout{display:grid;grid-template-columns:minmax(330px,32fr) minmax(0,68fr);grid-template-areas:'stats actions' 'property journal';gap:24px 28px;align-items:stretch}.panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 10px 30px #050b1833}.stats-panel{grid-area:stats;padding:22px 25px;min-height:451px}.actions-panel{grid-area:actions;padding:20px 24px 25px;min-height:451px}.property-panel{grid-area:property;padding:22px 25px;min-height:292px}.journal-panel{grid-area:journal;padding:22px 24px;min-height:292px;max-height:520px;display:flex;flex-direction:column}
+.identity{display:flex;align-items:center;gap:14px;margin-bottom:19px}.avatar{height:62px;width:62px;flex-shrink:0;display:grid;place-items:center;border:2px solid #4776dc;background:linear-gradient(140deg,#0d2b42,#091324);border-radius:50%;font-size:30px;position:relative}.avatar:before{content:"";position:absolute;inset:-3px;border-radius:50%;background:linear-gradient(140deg,#36dbbb,#6675fa 60%,transparent 80%);z-index:-1}.identity-info{flex:1;min-width:0}.name-line{display:flex;align-items:center;gap:8px}.name-line h1{font-size:21px;line-height:1.3;letter-spacing:-.6px;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.edit-name{background:none;border:0;color:#9bacc9;font-size:17px;padding:2px}.edit-name:hover{color:white}.job-subtitle{color:var(--muted);font-size:13px;margin-top:3px}.age-block{min-width:48px;text-align:right}.age-number{font-weight:900;font-size:30px;color:var(--yellow);line-height:1}.age-label{font-weight:700;color:#9aa8bc;font-size:12px;margin-top:3px}.money-box{background:#10192b;border-radius:14px;padding:15px 17px;margin-bottom:20px;border:1px solid #1e2d47}.money-row{display:flex;align-items:center;justify-content:space-between;gap:9px;padding:4px 0;color:#9aa8bc;font-size:12px}.money-row .label{display:flex;gap:8px;align-items:center}.money-row strong{font-size:14px;white-space:nowrap}.money-row.divider{margin-top:4px;padding-top:9px;border-top:1px solid #253248}.green{color:var(--green)}.blue{color:var(--blue)}.pink{color:var(--pink)}.yellow{color:var(--yellow)}.purple{color:var(--purple)}.stat{margin-bottom:13px}.stat-line{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;font-size:12px;font-weight:700}.stat-line .left{color:#c7cfdd}.stat-line .val{font-size:13px}.bar{height:10px;background:#243147;border-radius:999px;overflow:hidden}.bar-fill{height:100%;border-radius:999px;transition:width .4s ease}.fill-health{background:linear-gradient(90deg,#f72c62,#fb647a)}.fill-happiness{background:linear-gradient(90deg,#ffad21,#ffdd4c)}.fill-intellect{background:linear-gradient(90deg,#1bacee,#8b86fa)}.fill-skill{background:linear-gradient(90deg,#a44af8,#ed64cf)}.trait-strip{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}.trait{display:inline-flex;align-items:center;background:#293652;border:1px solid #374668;border-radius:100px;padding:4px 9px;font-size:10px;color:#c9d6ee;font-weight:700}.tiny-stats{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}.tiny-stat{background:#111c30;border:1px solid #26344b;border-radius:8px;color:#91a6c3;font-size:11px;padding:5px 8px}.tiny-stat b{color:#e1eafd}
+.tab-bar{display:flex;align-items:center;gap:10px;overflow-x:auto;scrollbar-width:none;margin-bottom:14px}.tab-bar::-webkit-scrollbar{display:none}.tab{background:transparent;border:1px solid transparent;border-radius:11px;padding:11px 13px;white-space:nowrap;color:#9ba8bb;font-weight:800;font-size:14px;display:flex;gap:9px;align-items:center;flex-shrink:0}.tab:hover{color:#eee;background:#26344a}.tab.active{background:#222044;border-color:#39318e;color:#9695ff}.tab-icon{font-size:17px}.tab-progress{height:12px;border-radius:5px;background:#28364b;overflow:hidden;margin:0 0 19px}.tab-progress-inner{height:100%;background:#48566e;border-radius:5px;width:100%;transition:width .3s}.action-heading{display:flex;justify-content:space-between;color:#96a5ba;font-size:11px;margin:-8px 0 10px;min-height:17px}.action-heading b{color:#dce6f4}.action-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.action-card{background:var(--card);border:1px solid #1d2c45;border-radius:15px;padding:16px 17px 17px;min-height:150px;display:flex;flex-direction:column}.action-card h3{margin:0 0 5px;display:flex;align-items:center;gap:10px;font-size:15px;line-height:1.35;font-weight:800;color:#e5eaf2}.action-card .action-icon{font-size:20px;flex-shrink:0}.action-card p{font-size:12px;color:#98a7bd;margin:0 0 14px;line-height:1.5;flex:1}.action-button{width:100%;min-height:42px;border:1px solid #3b4b65;border-radius:10px;background:#202d42;color:#e1e8f3;font-size:12px;font-weight:800;padding:9px 10px}.action-button:hover:not(:disabled){background:#2c3c57;transform:translateY(-1px)}.action-button.featured{background:#5549e7;border-color:#5c4df2;color:white}.action-button.featured:hover:not(:disabled){background:#685aff}.action-button.locked{background:#182438;color:#75849e}.section-title{display:flex;align-items:center;gap:9px;font-weight:900;font-size:15px;letter-spacing:-.3px;margin:0 0 16px}.section-title .symbol{color:#39d1b1;font-size:20px}.property-list{margin:0 0 25px}.property-row{display:flex;justify-content:space-between;align-items:center;gap:15px;border-bottom:1px solid #27344a;padding:11px 0;font-size:12px}.property-row:last-child{border-bottom:none}.property-row dt{color:#94a4ba}.property-row dd{margin:0;font-weight:800;text-align:right}.next-year{border:0;border-radius:14px;min-height:55px;background:linear-gradient(110deg,#10c796,#0b989d);color:#051727;font-weight:900;font-size:17px;width:100%;box-shadow:0 5px 19px #06a89324}.next-year:hover:not(:disabled){filter:brightness(1.1)}.year-note{text-align:center;font-size:11px;color:#95a7c0;margin:10px 0 0}.journal-top{display:flex;justify-content:space-between;align-items:center;gap:10px}.journal-count{color:#97a4b7;font-size:11px;white-space:nowrap}.journal-feed{display:flex;flex-direction:column;gap:9px;overflow:auto;scrollbar-color:#354963 transparent;scrollbar-width:thin;padding-right:4px;min-height:48px}.journal-entry{background:#111b2d;border-radius:10px;border:1px solid #18263e;padding:10px 13px;line-height:1.65;font-size:12px;color:#d3daea}.journal-entry .year-tag{color:#9698ff;font-family:ui-monospace,SFMono-Regular,monospace;font-size:11px;font-weight:800;white-space:nowrap;margin-right:8px}.journal-entry .event-text{color:#e0e7f3}.journal-entry .type-event{color:#fecf66}.journal-entry .type-good{color:#66e0b8}.journal-entry .type-bad{color:#ff8195}.journal-entry .type-death{color:#ff6787}.journal-hint{color:#71809a;text-align:center;font-size:11px;margin-top:14px}.mobile-dock{display:none}
+.modal-shade{position:fixed;inset:0;z-index:100;background:#030712cc;backdrop-filter:blur(7px);display:flex;justify-content:center;align-items:center;padding:18px;overflow-y:auto}.modal{border:1px solid #3b4b68;border-radius:22px;background:#1c293e;width:min(100%,520px);max-height:calc(100dvh - 30px);overflow-y:auto;box-shadow:0 30px 90px #0009;padding:27px}.modal-kicker{font-size:11px;font-weight:900;letter-spacing:.12em;color:#8a98ff;text-transform:uppercase;margin-bottom:8px}.modal h2{font-size:25px;line-height:1.3;margin:0 0 11px;letter-spacing:-.4px}.modal p{color:#abb8cb;font-size:13px;line-height:1.75;margin:0 0 20px}.choice-stack{display:flex;flex-direction:column;gap:10px}.choice-button{border:1px solid #43516c;background:#263752;color:#eef3fa;border-radius:12px;text-align:left;padding:15px;min-height:55px;font-weight:800}.choice-button:hover{background:#384d72;border-color:#7777ff}.choice-button span{display:block;font-size:11px;color:#aabbd3;font-weight:500;margin-top:3px}.modal-topline{display:flex;align-items:center;justify-content:space-between;gap:12px}.close-button{background:none;border:0;color:#b7c4d7;font-size:25px;padding:0 4px}.modal .full-button{width:100%;border:0;border-radius:11px;padding:14px;background:var(--primary);color:white;font-weight:900;margin-top:15px}.modal .sub-button{background:#2c3a51;border:1px solid #41516c}.ranking-tabs{display:flex;gap:7px;margin:15px 0}.ranking-tab{background:#26334d;border:1px solid #354763;border-radius:9px;padding:9px 10px;color:#b7c5db;font-weight:700;font-size:11px;flex:1}.ranking-tab.active{background:#4c45bd;color:white;border-color:#7066f4}.rank-item{display:flex;align-items:center;gap:13px;background:#111b2e;border:1px solid #2b3b55;border-radius:12px;padding:12px;margin-bottom:8px}.rank-no{font-size:18px;font-weight:900;color:#ffce58;width:28px}.rank-info{flex:1;min-width:0}.rank-info strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rank-info small{color:#8fa0b7}.rank-score{font-size:12px;font-weight:900;color:#67dcb6;text-align:right}.empty-state{text-align:center;color:#98abc5;background:#121d31;border-radius:12px;padding:25px 10px}.name-input{background:#10192a;border:1px solid #52617c;border-radius:10px;color:white;padding:12px 14px;width:100%;font-size:16px}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#2b3951;border:1px solid #637491;padding:12px 18px;color:white;border-radius:12px;z-index:200;font-weight:800;font-size:13px;box-shadow:0 10px 35px #0008;max-width:calc(100% - 30px);text-align:center;animation:slidein .2s ease-out}@keyframes slidein{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
+@media(min-width:1200px){.stats-panel{padding:23px 25px}.actions-panel{padding:19px 25px 25px}.action-grid{gap:14px}.action-card{padding:16px 17px;min-height:152px}.journal-panel{max-height:460px}}
+@media(max-width:1090px){.layout{grid-template-columns:minmax(300px,38fr) minmax(0,62fr);gap:15px}.stats-panel,.property-panel{padding:18px}.actions-panel,.journal-panel{padding:18px}.action-grid{gap:10px}.action-card{padding:12px;min-height:153px}.action-card h3{font-size:13px}.tab{font-size:12px;padding:10px}.name-line h1{font-size:18px}.action-card p{font-size:11px}}
+@media(max-width:760px){#app{padding:10px 11px 98px}.topbar{min-height:40px;margin-bottom:12px}.brand{font-size:16px}.brand-icon{width:28px;height:28px;font-size:19px}.brand-label{display:none}.top-actions{gap:7px}.top-actions .ghost-button{font-size:15px;padding:7px 9px}.top-actions .ghost-button span{display:none}.life-chip{padding:7px 8px;font-size:9px}.layout{display:flex;flex-direction:column;gap:12px}.panel{border-radius:16px}.stats-panel,.actions-panel,.property-panel,.journal-panel{min-height:0;padding:16px}.identity{margin-bottom:15px}.avatar{height:54px;width:54px;font-size:27px}.name-line h1{font-size:19px}.age-number{font-size:26px}.money-box{margin-bottom:15px;padding:11px 13px}.stat{margin-bottom:10px}.stat-line{margin-bottom:4px}.bar{height:8px}.trait-strip{margin-top:11px}.tiny-stats{margin-top:10px}.actions-panel{order:2}.stats-panel{order:1}.journal-panel{order:3;max-height:none;min-height:175px}.property-panel{order:4}.tab-bar{margin-bottom:11px}.tab{font-size:12px;padding:9px 10px}.tab-progress{height:8px;margin-bottom:14px}.action-grid{gap:9px}.action-card{padding:12px 10px;min-height:151px;border-radius:12px}.action-card h3{font-size:12px;gap:6px}.action-card .action-icon{font-size:17px}.action-card p{font-size:11px}.action-button{font-size:11px;padding:8px 6px;min-height:38px}.property-panel .next-year,.property-panel .year-note{display:none}.property-list{margin-bottom:0}.journal-feed{max-height:300px}.mobile-dock{display:flex;align-items:center;gap:9px;position:fixed;z-index:30;bottom:0;left:0;right:0;background:#111c2df5;backdrop-filter:blur(15px);border-top:1px solid #34435e;padding:10px max(12px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom))}.mobile-dock .next-year{flex:1;min-height:49px;font-size:14px}.dock-secondary{background:#24344c;border:1px solid #3a4b67;border-radius:11px;color:#d7e1ef;padding:12px;min-height:49px;font-weight:800;font-size:12px}.modal{padding:22px}.modal h2{font-size:22px}}
+@media(max-width:380px){.action-grid{grid-template-columns:1fr}.action-card{min-height:auto}.action-card p{margin-bottom:10px}.stat-line,.money-row{font-size:11px}.identity{gap:10px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+/* Vòng đời tự động: hai nút riêng cho thủ công và tự động */
+.year-controls{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.year-controls .next-year{font-size:14px;min-height:54px}
+.auto-year{position:relative;overflow:hidden;isolation:isolate;width:100%;min-height:54px;border:1px solid #6967ec;border-radius:14px;background:linear-gradient(125deg,#403ab2,#292a67);color:#eaeaff;font-weight:900;font-size:13px;box-shadow:0 5px 18px #4a40d321}
+.auto-year:hover:not(:disabled){filter:brightness(1.12)}
+.auto-year.running{background:linear-gradient(125deg,#7e294f,#4b234c);border-color:#ef719b;color:#fff}
+.auto-year.running::after{content:"";position:absolute;bottom:0;left:0;width:100%;height:4px;background:#ffc9df;transform-origin:left;animation:auto-year-progress 5s linear infinite}
+@keyframes auto-year-progress{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@media(max-width:760px){.property-panel .year-controls{display:none}.mobile-dock .auto-year,.mobile-dock .next-year{flex:1;min-width:0;min-height:52px;font-size:12px;padding:8px 5px}.mobile-dock .next-year{font-size:14px}}
+@media(prefers-reduced-motion:reduce){.auto-year.running::after{animation:auto-year-progress 5s linear infinite}}
+
+/* v0.3 — IQ scores & four compact leaderboard tabs */
+.iq-info{color:#8badd3;font-size:10px;text-align:right;margin:-8px 0 12px;letter-spacing:.01em}
+.iq-info b{color:#7dcaff}
+.ranking-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.ranking-tab{min-width:0;min-height:38px;line-height:1.2;white-space:normal;padding:8px}
+@media(min-width:500px){.ranking-tabs{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:760px){.iq-info{margin:-6px 0 10px}.journal-count{max-width:46%;white-space:normal;text-align:right}}
+
+/* v0.4 — Hồi ký các kiếp đã qua */
+.top-actions{flex-wrap:wrap;justify-content:flex-end}
+.archive-modal{width:min(100%,780px);padding:25px 28px}
+.archive-modal h2{margin-bottom:9px}
+.archive-summary{background:#172840;border:1px solid #32496b;padding:13px 15px;border-radius:12px;color:#c2d4ed;font-size:12px;margin-bottom:14px}
+.archive-summary b{color:#60e0bd}
+.archive-list{display:flex;flex-direction:column;gap:10px;max-height:52dvh;overflow-y:auto;scrollbar-color:#415474 transparent;padding-right:4px}
+.archive-life-card{width:100%;border:1px solid #354866;border-radius:13px;background:#111b2d;color:#edf3ff;text-align:left;padding:13px;display:flex;align-items:center;gap:13px;min-height:79px}
+.archive-life-card:hover{background:#1e3250;border-color:#6d81bc}
+.archive-life-icon{font-size:26px;flex-shrink:0}
+.archive-life-main{min-width:0;flex:1;display:flex;flex-direction:column;gap:3px}
+.archive-life-main strong{font-weight:900;font-size:14px;overflow-wrap:anywhere}
+.archive-life-main small{color:#9dafc9;font-size:11px;line-height:1.5;overflow-wrap:anywhere}
+.archive-life-tail{font-size:10px;flex-shrink:0;color:#a8b8ce;text-align:right}
+.archive-footnote{margin:14px 0 0!important;font-size:11px!important;color:#8d9bb1!important}
+.archive-back{border:0;background:none;color:#9facff;font-size:12px;font-weight:800;padding:4px 0 12px}
+.archive-back:hover{color:white}
+.archive-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:14px 0}
+.archive-metrics div{border:1px solid #334663;border-radius:12px;padding:11px;background:#121f32;min-width:0}
+.archive-metrics span{display:block;color:#8fa6c4;font-size:10px;margin-bottom:5px}
+.archive-metrics strong{display:block;font-size:15px;color:#64dcbe;overflow-wrap:anywhere}
+.archive-death{border:1px solid #6a3f5b;background:#341f34;border-radius:12px;padding:12px 14px;display:flex;gap:7px;flex-direction:column;margin-bottom:12px;font-size:12px}
+.archive-death strong{color:#ff7e9a}.archive-death span{color:#d5bfd0}
+.archive-more{color:#acbbcf;font-size:12px;line-height:2;margin-bottom:14px}
+.archive-warning{font-size:12px;line-height:1.7;background:#3a3025;border:1px solid #80623e;color:#ffda9e;border-radius:12px;padding:15px;margin-bottom:14px}
+.archive-timeline-header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:12px 0 9px}
+.archive-timeline-header h3{font-size:13px;margin:0;color:#f0f2fc}
+.archive-jump-label{font-size:11px;color:#aebcd2;display:flex;gap:6px;align-items:center}
+.archive-jump-label select{background:#1f3450;border:1px solid #426082;border-radius:8px;color:#edf3fe;padding:5px 7px;font-size:12px}
+.archive-timeline{max-height:38dvh;min-height:115px;overflow:auto;position:relative;scrollbar-color:#506281 transparent;background:#111b2d;border:1px solid #293a56;border-radius:13px;padding:11px}
+.archive-age-heading{position:relative;background:#202b46;color:#aeb5ff;border:1px solid #36456d;border-radius:8px;padding:6px 10px;margin:9px 0;font-size:12px;font-weight:900;scroll-margin-top:5px}
+.archive-age-heading:first-child{margin-top:0}
+.archive-event{display:flex;gap:9px;padding:8px 6px;border-bottom:1px solid #243148;color:#dbe3f0;font-size:12px;line-height:1.7;overflow-wrap:anywhere}
+.archive-event:last-child{border-bottom:0}
+.archive-event-type{flex-shrink:0}
+.archive-modal .full-button{margin-top:12px}
+@media(max-width:760px){.top-actions{gap:5px}.top-actions .ghost-button{padding:7px 8px;font-size:14px}.archive-modal{padding:19px 15px}.archive-life-tail{font-size:10px}.archive-life-card{gap:8px;padding:11px}.archive-life-main strong{font-size:12px}.archive-life-main small{font-size:10px}.archive-metrics strong{font-size:12px}.archive-timeline{max-height:40dvh}.archive-life-icon{font-size:19px}}
+/* v0.6 Global leaderboard and anonymous guest */
+.online-pill{font-size:11px;font-weight:800;border:1px solid #526078;border-radius:8px;padding:8px 10px;color:#aabacf;white-space:nowrap}
+.online-pill.connected{color:#43edba;border-color:#1a9772;background:#17372f}
+.guest-button{max-width:200px}
+.guest-button span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px;display:inline-block;vertical-align:middle}
+#loading-game{font:600 16px system-ui;color:#cbd7ee;padding:32px;text-align:center}
+#loading-game strong{color:#52e5c4}
+@media(max-width:700px){.online-pill{font-size:10px;padding:6px}.guest-button span{max-width:72px}.guest-button{padding-inline:6px}}
+
+</style>
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div class="brand"><span class="brand-icon">✦</span><span>ĐỜI <strong>NÀY</strong></span><span class="brand-label">LIFE SIMULATOR</span></div>
+      <div class="top-actions"><span id="online-status" class="online-pill" title="Trạng thái server">Đang kết nối…</span><button id="btn-nickname" class="ghost-button guest-button" type="button" data-command="nickname">👤 <span id="guest-name">Khách</span></button><span id="life-count" class="life-chip">KIẾP #001</span><button id="btn-archive" class="ghost-button" type="button" data-command="archive">📜 <span>Kiếp trước</span></button><button id="btn-ranking" class="ghost-button" type="button">🏆 <span>Bảng xếp hạng</span></button></div>
+    </header>
+    <main class="layout">
+      <section id="player-panel" class="panel stats-panel" aria-label="Nhân vật"></section>
+      <section id="actions-panel" class="panel actions-panel" aria-label="Lựa chọn cuộc đời"></section>
+      <section id="property-panel" class="panel property-panel" aria-label="Tài sản và gia đình"></section>
+      <section id="journal-panel" class="panel journal-panel" aria-label="Nhật ký cuộc đời"></section>
+    </main>
+    <footer class="mobile-dock" id="mobile-dock"></footer>
+  </div>
+  <div id="overlay-root"></div>
+  <div id="toast-root" role="status" aria-live="polite"></div>
+  <script>
+// ===== config.js =====
+const CONFIG = {
+  STORAGE_KEY: 'doi-nay-save-v1',
+  BOARD_KEY: 'doi-nay-rankings-v1',
+  COUNT_KEY: 'doi-nay-life-count-v1',
+  ARCHIVE_INDEX_KEY: 'doi-nay-archive-index-v1',
+  ARCHIVE_LIFE_PREFIX: 'doi-nay-life-archive-v1:',
+  MAX_AGE: 115,
+  MAX_STAT: 100,
+  MAX_IQ: 200,
+  AMBIENT_EVENTS_PER_YEAR: 2,
+  ACTIONS_PER_YEAR: 2,
+  categories: [
+    { id: 'study', label: 'Học tập & Phát triển', icon: '📖' },
+    { id: 'work', label: 'Việc làm & Lương', icon: '💼' },
+    { id: 'life', label: 'Giải trí & Đời sống', icon: '☕' },
+    { id: 'finance', label: 'Đầu tư & Tài chính', icon: '🏦' }
+  ]
+};
+const rand = (min,max) => Math.floor(Math.random()*(max-min+1))+min;
+const pick = arr => arr[rand(0,arr.length-1)];
+const clamp = (v,min=0,max=100) => Math.min(max,Math.max(min,v));
+const formatMoney = n => {
+  const sign = n < 0 ? '-' : '';
+  const value = Math.abs(Math.round(n));
+  if(value >= 1e9) return sign+(value/1e9).toLocaleString('vi-VN',{maximumFractionDigits:2})+' Tỷ';
+  if(value >= 1e6) return sign+(value/1e6).toLocaleString('vi-VN',{maximumFractionDigits:1})+' Triệu';
+  if(value >= 1e3) return sign+(value/1e3).toLocaleString('vi-VN',{maximumFractionDigits:0})+'k';
+  return sign+value.toLocaleString('vi-VN');
+};
+const escapeHTML = value => String(value).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+
+// ===== player.js =====
+
+const FIRST_F = ['Bích Phương','Minh Anh','Ngọc Hà','Thảo My','Khánh Linh','Phương Nhi','Thu Trang','Mai Chi'];
+const FIRST_M = ['Minh Đức','Đức Anh','Gia Bảo','Quang Huy','Hoàng Nam','Trung Kiên','Hữu Phúc','Anh Tuấn'];
+const FAMILY = ['Nguyễn','Trần','Lê','Phạm','Hoàng','Bùi','Đặng','Vũ','Đỗ','Phan'];
+// 5% sinh ra IQ > 100; 150+ là 0,05% trên tổng số lần đầu thai.
+// Mỗi IQ 150..199 xấp xỉ 0,00099%; IQ 200 là 1% của nhóm 150+.
+// Dùng số thực trực tiếp để không làm tròn mất nhóm siêu hiếm.
+function rollBirthIQ(r=Math.random()){
+  if(r<.95)return 1+Math.floor(r/.95*100); // 95%: 1..100
+  if(r<.9995)return 101+Math.min(48,Math.floor((r-.95)/.0495*49)); // 4,95%: 101..149
+  const rare=(r-.9995)/.0005;
+  if(rare>=.99)return 200; // 1% trong nhóm siêu hiếm (0,0005% tổng thể)
+  return 150+Math.min(49,Math.floor(rare/.99*50)); // 150..199
+}
+function rollBirthWealth(r=Math.random()){
+  if(r<.05)return 86+Math.floor(r/.05*15); // đúng 5% gia cảnh giàu
+  if(r<.23)return 62+Math.floor((r-.05)/.18*24);
+  if(r<.74)return 21+Math.floor((r-.23)/.51*41);
+  return 1+Math.floor((r-.74)/.26*20);
+}
+function traitList(p){
+  const traits=[];
+  if(p.intellect>=150)traits.push('🧠 Não thiên tài hiếm');
+  if(p.intellect>=101 && p.intellect<150)traits.push('📚 Não trên 100 IQ');
+  if(p.intellect<=20)traits.push('🥔 Não khoai tây');
+  if(p.beauty>=88 && p.intellect<=25)traits.push('💅 Bình hoa di động');
+  if(p.luck>=90 && p.wealth<=30)traits.push('🍀 Nghèo mà đỏ');
+  if(p.wealth>=86)traits.push('🥄 Ngậm thìa vàng');
+  if(p.wealth<=13)traits.push('🫠 Sinh ra đã khó');
+  if(p.eq>=90)traits.push('🤝 Vua giao tiếp');
+  if(p.health<=20)traits.push('🩹 Giòn như bánh tráng');
+  if(!traits.length)traits.push('🦆 Người thường hệ khó');
+  return traits.slice(0,3);
+}
+function createPlayer(lifeNumber=1){
+  const gender=pick(['Nam','Nữ']);
+  const wealth=rollBirthWealth(), luck=rand(1,100);
+  const cash=wealth>=86?rand(150,800)*1e6:wealth>=62?rand(15,55)*1e6:wealth>45?rand(4,12)*1e6:wealth>20?rand(1,5)*1e6:rand(0,8)*100000;
+  const p={id:Date.now()+'-'+rand(1,999999),lifeNumber,name:pick(FAMILY)+' '+pick(gender==='Nữ'?FIRST_F:FIRST_M),gender,age:0,
+    health:rand(45,100),happiness:rand(45,90),intellect:rollBirthIQ(),eq:rand(1,100),beauty:rand(1,100),skill:rand(5,30),
+    wealth,luck,cash,invested:0,job:'Em bé toàn thời gian',salary:0,yearlyExpenses:0,
+    marriage:'Độc thân',house:'Ở cùng bố mẹ',vehicle:'Xe nôi',children:0,traits:[],actionsLeft:CONFIG.ACTIONS_PER_YEAR,
+    actionUses:{},year:0,alive:true,deathReason:'',absurdity:0,pendingEvent:null,history:[],wonLottery:false};
+  p.birthIQ=p.intellect;p.peakIQ=p.intellect;
+  p.traits=traitList(p);
+  addLog(p,`🍼 Mày vừa đầu thai vào gia đình ${wealth>85?'giàu nứt đố đổ vách':wealth>50?'khá giả':wealth>20?'bình dân':'nghèo vượt khó'}. Chỉ số nhân phẩm đã được random, miễn khiếu nại!`,'event');
+  return p;
+}
+function addLog(player,text,type='normal'){
+  player.history.push({id:Date.now()+'-'+rand(0,99999),age:player.age,text,type});
+  // Không xóa log cũ: lịch sử kiếp trước cần đọc lại trọn đời.
+}
+function applyEffects(p,effects={}){
+  for(const [key,delta] of Object.entries(effects)){
+    if(!Number.isFinite(delta)||!Object.prototype.hasOwnProperty.call(p,key))continue;
+    if(['cash','invested','salary','absurdity','children'].includes(key)) p[key]=Math.max(0,p[key]+delta);
+    else if(['health','happiness','intellect','eq','beauty','skill','luck'].includes(key)){
+      const max=key==='intellect'?CONFIG.MAX_IQ:CONFIG.MAX_STAT;
+      p[key]=clamp(p[key]+delta,0,max);
+    }
+  }
+  p.peakIQ=Math.max(p.peakIQ??p.intellect,p.intellect);
+}
+function isDead(p){return !p.alive}
+
+
+// ===== avatar.js =====
+function getAvatar(player){
+  if(player.age<3) return '👶';
+  if(player.age<13) return player.gender==='Nữ'?'👧':'👦';
+  if(player.age<18) return player.gender==='Nữ'?'👩':'🧑';
+  if(player.age>=75) return player.gender==='Nữ'?'👵':'👴';
+  if(player.age>=50) return player.gender==='Nữ'?'👩‍🦳':'👨‍🦳';
+  if(player.health<25) return '🤕';
+  if(player.wealth>90 && player.cash>1e9) return '🤑';
+  if(player.happiness>78) return '😎';
+  return player.gender==='Nữ'?'👩‍💻':'🧑‍💻';
+}
+
+
+// ===== customEvents.js =====
+/**
+ * FILE DÀNH RIÊNG CHO MÀY TỰ CHẾ SỰ KIỆN!
+ *
+ * Chỉ cần THÊM object mới vào 1 trong 2 mảng dưới đây.
+ * KHÔNG cần sửa engine.js, events.js hay bất cứ logic random nào.
+ *
+ * Hai loại:
+ *  1) CUSTOM_AMBIENT_EVENTS = sự kiện tự nổ trong nhật ký; 2 lần/năm.
+ *  2) CUSTOM_CHOICE_EVENTS  = sự kiện hiện lựa chọn mỗi năm.
+ *
+ * Cả 2 đều tự vào vòng quay random theo min/max tuổi.
+ * weight: 1 mặc định; weight: 5 nghĩa là có trọng số gấp 5 một sự kiện weight: 1.
+ * effect hỗ trợ: cash (VND), intellect (điểm IQ), eq, health, happiness,
+ *                 skill, luck, v.v.  Dấu + là tăng, dấu - là giảm.
+ * absurdity = điểm trái ngang; type: 'good', 'bad' hoặc 'event'.
+ *
+ * LƯU Ý: đặt dấu phẩy giữa các object. Chuỗi có dấu ' bên trong
+ * nên dùng dấu "..." hoặc escape dấu ' thành \\' để không lỗi JavaScript.
+ * Sự kiện người lớn để min: 18 trở lên.
+ */
+
+const CUSTOM_AMBIENT_EVENTS = [
+  // Ví dụ 1: tự chạy, độ tuổi 18–70, tăng độ xuất hiện bằng weight.
+  {
+    min: 18,
+    max: 70,
+    text: '💨 Mày đánh rắm trong thang máy rồi giả vờ nhìn điện thoại. Camera đã quay tất cả.',
+    effect: { happiness: -2, eq: -1 },
+    absurdity: 7,
+    type: 'bad',
+    weight: 3
+  },
+  // Ví dụ 2: may mắn/tiền bạc.
+  {
+    min: 18,
+    max: 90,
+    text: '💵 Giặt quần cũ, mày móc ra tờ 200 nghìn mà tưởng mình vừa đào được kho báu.',
+    effect: { cash: 200000, happiness: 3 },
+    absurdity: 1,
+    type: 'good',
+    weight: 2
+  },
+
+  // THÊM SỰ KIỆN MỚI VÀO ĐÂY, ví dụ:
+  // {
+  //   min: 6, max: 17,
+  //   text: '🤡 Mày quên làm bài tập, lên lớp nhận ngay danh hiệu thánh đãng trí.',
+  //   effect: { intellect: -1, happiness: -3 },
+  //   absurdity: 5,
+  //   type: 'bad',
+  //   weight: 1
+  // },
+];
+
+const CUSTOM_CHOICE_EVENTS = [
+  // Ví dụ: biến cố yêu cầu chọn một phương án.
+  {
+    min: 18,
+    max: 65,
+    title: 'Thang máy thối um',
+    description: 'Trong thang máy kín người, ai đó vừa xì hơi một phát. Tất cả đều nhìn mày.',
+    weight: 2,
+    choices: [
+      {
+        label: 'Nhận tội dù không làm',
+        hint: 'EQ +3, trái ngang +6',
+        effect: { eq: 3, happiness: -2 },
+        text: '💨 Mày đứng ra nhận tội. Cả tòa nhà nhớ mặt mày suốt một tháng.',
+        absurdity: 6
+      },
+      {
+        label: 'Nhìn chằm chằm ông sếp',
+        hint: 'Hạnh phúc +3, EQ -4',
+        effect: { happiness: 3, eq: -4 },
+        text: '👀 Sếp nhìn ngược lại. Hai người bắt đầu chiến tranh lạnh.',
+        absurdity: 5
+      }
+    ]
+  },
+
+  // THÊM BIẾN CỐ CÓ LỰA CHỌN VÀO ĐÂY THEO MẪU TRÊN.
+];
+
+
+// ===== events.js =====
+
+// Sự kiện theo tuổi, có lựa chọn thực sự ảnh hưởng các chỉ số. Có thể thêm từng object độc lập.
+const EVENTS = [
+  {min:1,max:5,title:'Kẹo trên sàn nhà',description:'Một viên kẹo lăn lóc dưới gầm bàn. Mày có định kiểm tra quy tắc 5 giây?',choices:[
+    {label:'Nhặt ăn, đời có mấy khi',hint:'May rủi về sức khỏe',effect:{health:-7,happiness:5},text:'🍬 Mày ăn luôn viên kẹo trên sàn. Vui miệng nhưng cái bụng bắt đầu phản đối.',absurdity:3},
+    {label:'Đưa người lớn xử lý',hint:'Khôn hơn tuổi',effect:{intellect:3,eq:2},text:'🧠 Mày nhờ người lớn xử lý, cứu được hệ tiêu hóa.'}]},
+  {min:1,max:6,title:'Thiên tài tô màu?',description:'Bức tranh con vịt của mày trông hơi giống... củ khoai tây.',choices:[
+    {label:'Tự tin đem khoe cả nhà',hint:'EQ +5, hạnh phúc +5',effect:{eq:5,happiness:5},text:'🎨 Cả nhà khen hết lời vì không ai dám nói sự thật.'},
+    {label:'Ngồi vẽ thêm một tiếng',hint:'Trí tuệ +5',effect:{intellect:5,happiness:-2},text:'🖍️ Bức tranh mới cuối cùng nhìn ra con vịt.'}]},
+  {min:6,max:12,title:'Kiểm tra đột xuất',description:'Cô giáo gọi mày lên bảng. Lớp im phăng phắc.',choices:[
+    {label:'Bình tĩnh giải bài',hint:'IQ +4, hạnh phúc -2',effect:{intellect:4,happiness:-2},text:'📗 Mày giải xong bài, tự nhiên thấy mình như giáo sư.'},
+    {label:'Tung tuyệt chiêu "em đau bụng"',hint:'Hạnh phúc +3, EQ -3',effect:{happiness:3,eq:-3},text:'🤡 Mày thoát lên bảng nhưng bị cô ghi vào sổ đầu bài.',absurdity:4}]},
+  {min:7,max:17,title:'Drama trong lớp',description:'Hai đứa bạn thân cãi nhau và đều bắt mày chọn phe.',choices:[
+    {label:'Đứng ra giảng hòa',hint:'EQ +6, hạnh phúc -3',effect:{eq:6,happiness:-3},text:'🤝 Mày hòa giải thành công, hôm sau hai đứa lại giận nhau.'},
+    {label:'Đi mua trà sữa xem biến',hint:'Hạnh phúc +5, tiền -60k',effect:{cash:-60000,happiness:5},text:'🧋 Mày thành khán giả VIP của drama lớp học.',absurdity:3}]},
+  {min:13,max:21,title:'Crush đã thả tim!',description:'Một trái tim hiện lên dưới story của mày. Tim mày đập nhanh hơn wifi nhà hàng xóm.',choices:[
+    {label:'Nhắn tin bắt chuyện',hint:'EQ +5, may mắn quyết định',effect:{eq:5,happiness:4},text:'💬 Hai đứa trò chuyện được 30 phút, mày đã nghĩ tên cho con.'},
+    {label:'Giả vờ không quan tâm',hint:'Trí tuệ +2, hạnh phúc -4',effect:{intellect:2,happiness:-4},text:'🥲 Mày chờ người ta nhắn tiếp đến... hết tuần.'}]},
+  {min:17,max:30,title:'Đầu tư tiền nhàn rỗi?',description:'Một ông anh trên mạng hứa kiếm tiền gấp đôi trong 24 giờ.',choices:[
+    {label:'Không có bữa trưa miễn phí',hint:'Trí tuệ +4, giữ tiền',effect:{intellect:4},text:'🛡️ Mày tránh được một cú lừa kinh điển.'},
+    {label:'Liều ăn nhiều!',hint:'Mất 2 triệu, độ trái ngang +10',effect:{cash:-2000000,happiness:-7},text:'💸 Ông anh biến mất cùng tiền của mày. Tài khoản thì vẫn online.',absurdity:10}]},
+  {min:18,max:35,title:'Phỏng vấn bất ngờ',description:'Một công ty gửi lời mời phỏng vấn nhưng giờ hẹn là 7:00 sáng.',choices:[
+    {label:'Dậy sớm đi thử sức',hint:'Kỹ năng +7, sức khỏe -3',effect:{skill:7,health:-3},text:'☕ Mày đến sớm, người phỏng vấn đến muộn.'},
+    {label:'Ngủ thêm cho đời tươi',hint:'Sức khỏe +3, bỏ lỡ cơ hội',effect:{health:3,happiness:2},text:'🛌 Mày ngủ thêm. Công ty cũng không gọi lại.'}]},
+  {min:20,max:50,title:'Bạn rủ mở quán cà phê',description:'Bạn thân có ý tưởng kinh doanh và một bản PowerPoint toàn hình mèo.',choices:[
+    {label:'Góp 5 triệu thử sức',hint:'Tiền -5 triệu, kỹ năng +5',effect:{cash:-5000000,skill:5},text:'☕ Quán mới mở chưa thấy khách, thấy toàn bạn tới xin uống chùa.',absurdity:3},
+    {label:'Xin làm khách ruột thôi',hint:'EQ +3, giữ tiền',effect:{eq:3},text:'🍰 Mày giữ được tiền và tình bạn.'}]},
+  {min:18,max:60,title:'Nhặt được ví tiền',description:'Mày nhặt được chiếc ví dày cộp, bên trong có giấy tờ chủ nhân.',choices:[
+    {label:'Tìm cách trả lại',hint:'EQ +6, hạnh phúc +5',effect:{eq:6,happiness:5},text:'💚 Chủ ví cảm ơn, mời mày một bữa cơm.'},
+    {label:'Cầm luôn, trời cho?',hint:'Tiền +1 triệu, EQ -12',effect:{cash:1000000,eq:-12},text:'😬 Ví có tiền nhưng lương tâm lâu lâu nhắc bài.',absurdity:8}]},
+  {min:25,max:55,title:'Sếp nhắn tin lúc nửa đêm',description:'Tin nhắn viết: "Em ơi, còn thức không?". Ngày mai là thứ bảy.',choices:[
+    {label:'Trả lời và làm nốt',hint:'Kỹ năng +5, sức khỏe -6',effect:{skill:5,health:-6},text:'💼 Mày thức đến 2 giờ sáng. Sếp chỉ thả biểu tượng 👍.'},
+    {label:'Để sáng mai tính',hint:'Sức khỏe +4, EQ -2',effect:{health:4,eq:-2},text:'📵 Mày có một giấc ngủ ngon hiếm hoi.'}]},
+  {min:35,max:75,title:'Họp lớp định mệnh',description:'Bạn cũ đi xe sang, người khác khoe con giỏi. Mày được hỏi: "Dạo này sao rồi?"',choices:[
+    {label:'Kể thật cuộc đời',hint:'EQ +6, hạnh phúc +3',effect:{eq:6,happiness:3},text:'🤗 Một đứa bạn cũng đang khốn khổ y như mày.'},
+    {label:'Nổ nhẹ cho đỡ quê',hint:'Hạnh phúc +5, EQ -5',effect:{happiness:5,eq:-5},text:'🎤 Câu chuyện của mày có thêm vài tỷ doanh thu tưởng tượng.',absurdity:5}]},
+  {min:40,max:90,title:'Chẩn đoán từ Google',description:'Mày hơi đau lưng và lỡ gõ triệu chứng lên mạng. Kết quả toàn bệnh đáng sợ.',choices:[
+    {label:'Đi bác sĩ cho chắc',hint:'Mất 1 triệu, sức khỏe +8',effect:{cash:-1000000,health:8},text:'🏥 Bác sĩ bảo mày cần ngủ sớm và ngồi bớt lướt mạng.'},
+    {label:'Tự kê thuốc theo mạng',hint:'Hạnh phúc -4, sức khỏe -7',effect:{health:-7,happiness:-4},text:'🫠 Mày tự dọa mình một tuần rồi cuối cùng cũng đi bác sĩ.',absurdity:6}]},
+  {min:60,max:115,title:'Hội người cao tuổi rủ đi nhảy',description:'Khu phố có lớp thể dục nhịp điệu lúc 5 giờ sáng.',choices:[
+    {label:'Mặc đồ thể thao tham gia',hint:'Sức khỏe +6, EQ +5',effect:{health:6,eq:5},text:'💃 Mày thành gương mặt sáng giá của đội thể dục.'},
+    {label:'Ở nhà trông cây cảnh',hint:'Hạnh phúc +4, sức khỏe -2',effect:{happiness:4,health:-2},text:'🪴 Cây cảnh sống khỏe hơn mày một chút.'}]},
+  {min:1,max:115,title:'Một ngày trái ngang',description:'Đang yên đang lành, cuộc đời bất ngờ gửi cho mày một bài kiểm tra nhân phẩm.',choices:[
+    {label:'Cười vào mặt số phận',hint:'Hạnh phúc +6, EQ +2',effect:{happiness:6,eq:2},text:'😎 Mày vẫn cười dù mọi thứ hơi bất ổn.'},
+    {label:'Rút kinh nghiệm sâu sắc',hint:'Trí tuệ +4, hạnh phúc -2',effect:{intellect:4,happiness:-2},text:'🧘 Mày nhận ra không phải chuyện gì cũng có lời giải.'}]}
+];
+
+// Các biến cố nhiều lựa chọn bổ sung: chuyện khó đỡ có hậu quả, không chặn vòng đời nếu tự chạy.
+const option=(label,hint,effect,text,absurdity=0)=>({label,hint,effect,text,absurdity});
+const choice=(min,max,title,description,a,b,weight=1)=>({min,max,title,description,choices:[a,b],weight});
+EVENTS.push(
+  choice(1,5,'Ai đánh rắm thế?','Trong phòng vang lên một tiếng "bủm". Cả nhà nhìn mày như hung thủ.',
+    option('Nhận tội hộ cả nhà','EQ +3, trái ngang +3',{eq:3,happiness:-1},'💨 Mày nhận luôn. Mẹ bảo ít nhất con rất có trách nhiệm.',3),
+    option('Chỉ thẳng mặt bố','Hạnh phúc +4, EQ -2',{eq:-2,happiness:4},'🤭 Bố đỏ mặt, cả nhà cười như được mùa.')),
+  choice(1,5,'Bỉm nổ tung','Một cú "đánh bom" trong bỉm khiến cả nhà phải sơ tán.',
+    option('Cười nắc nẻ','Hạnh phúc +5',{happiness:5},'💩 Mày ngồi cười trong khi bố đi tìm khẩu trang.',5),
+    option('Khóc ăn vạ','EQ -2, sức khỏe +2',{eq:-2,health:2},'🍼 Mày ré lên như còi báo động, người lớn chạy đến thay bỉm.')),
+  choice(6,12,'Đại chiến nhà vệ sinh','Vừa ngồi xuống thì phát hiện cuộn giấy đã biến mất.',
+    option('Gọi cứu viện','EQ +3, trái ngang +4',{eq:3},'🧻 Mày gọi bạn cứu bằng giọng run rẩy. Cả lớp biết chuyện.',4),
+    option('Chờ người đi ngang','Hạnh phúc -3, IQ +1',{happiness:-3,intellect:1},'🚽 Mày ngồi suy ngẫm nhân sinh 20 phút.')),
+  choice(6,12,'Điểm 0 chói lọi','Bài kiểm tra có một con số 0 to như tương lai chưa chắc chắn.',
+    option('Về học tử tế','IQ +5, vui -4',{intellect:5,happiness:-4},'📚 Mày lao vào học để lần sau không còn làm trò hề.'),
+    option('Đổ tại bút hết mực','EQ -3, trái ngang +5',{eq:-3,happiness:2},'🖊️ Cô giáo hỏi sao bút hết mực mà khoanh đủ tên.',5)),
+  choice(6,17,'Thánh bóc phốt trong lớp','Ảnh mày ngủ gật há miệng bị đưa lên nhóm lớp.',
+    option('Tự chế meme về mình','EQ +5, vui +3',{eq:5,happiness:3},'📸 Mày biến luôn ảnh nhục thành sticker và thành huyền thoại.'),
+    option('Đòi admin xóa','EQ -2, trái ngang +4',{eq:-2,happiness:-2},'💢 Càng đòi xóa, meme càng phủ sóng.',4)),
+  choice(12,17,'Lộ lịch sử tìm kiếm','Mày chiếu màn hình trước lớp và quên tắt tab "cách làm giàu không cần làm".',
+    option('Cười trừ cho qua','EQ +4',{eq:4},'🧑‍🏫 Cả lớp cười, cô giáo bảo mày nên tập trung thi học kỳ.'),
+    option('Tắt máy giả mất điện','Trái ngang +6',{happiness:-4},'🔌 Mày giật phích cắm, quên rằng đó là laptop chạy pin.',6)),
+  choice(13,17,'Đại chiến trà sữa','Mày làm đổ trà sữa lên quần ngay trước mặt crush.',
+    option('Lấy khăn lau tỉnh bơ','EQ +4',{eq:4},'🧋 Crush đưa khăn giấy. Mày còn giữ cái khăn tận 3 tháng.'),
+    option('Đổ tại lực hấp dẫn','Vui +2, trái ngang +5',{happiness:2},'🥤 Mày cãi nhau với định luật Newton và thua.',5)),
+  choice(16,25,'Phỏng vấn CLB như đi thi hoa hậu','Ban tuyển thành viên hỏi "em có ưu điểm gì?". Đầu mày trắng như tờ giấy.',
+    option('Trả lời chân thành','Kỹ năng +3, EQ +2',{skill:3,eq:2},'🎤 Mày nói mình chăm chỉ, ít nhất không ai bật cười.'),
+    option('Nổ mình có 10 năm kinh nghiệm','Trái ngang +8, EQ -3',{eq:-3,happiness:-2},'🎪 Người phỏng vấn hỏi mày làm việc từ năm 6 tuổi à.',8)),
+  choice(18,35,'Tin nhắn gửi nhầm người yêu cũ','Mày định gửi ảnh mèo cho bạn, lại gửi cho người yêu cũ.',
+    option('Thừa nhận gửi nhầm','EQ +4, vui -2',{eq:4,happiness:-2},'🐈 Người cũ thả tim con mèo. Hết phim.'),
+    option('Giả vờ đang thử tính năng','Trái ngang +5',{eq:-2,happiness:-3},'📱 Mày giải thích 17 dòng, đối phương trả lời "ừ".',5)),
+  choice(18,50,'Đồng nghiệp hôi chân','Người ngồi cạnh cởi giày, mùi bốc lên như vũ khí sinh học.',
+    option('Góp ý tế nhị','EQ +5',{eq:5},'🧦 Đồng nghiệp mua tất mới, văn phòng lập tức hồi sinh.'),
+    option('Dùng quạt đẩy mùi','Trái ngang +7',{happiness:2,health:-1},'🌪️ Quạt đẩy thẳng sang phòng sếp, cả tầng náo loạn.',7)),
+  choice(18,45,'Đám cưới người yêu cũ','Thiệp cưới gửi tới kèm câu "nhớ đến nhé".',
+    option('Đến ăn cỗ bình thường','EQ +6, vui -2',{eq:6,happiness:-2},'🍗 Mày ăn bốn cái đùi gà, nhận ra đời vẫn ngon.'),
+    option('Đăng story tâm trạng','EQ -4, trái ngang +5',{eq:-4,happiness:-5},'📲 Mày đăng 17 story. Mẹ hỏi có ốm không.',5)),
+  choice(18,60,'Shipper giao nhầm 100 hộp bánh','Đơn của mày có một hộp, người giao mang nguyên thùng.',
+    option('Trả lại hàng dư','EQ +5, may mắn +1',{eq:5,luck:1},'📦 Shipper cảm ơn rối rít, mày được tặng thêm bánh.'),
+    option('Giữ bí mật mà ăn','Trái ngang +8, sức khỏe -3',{happiness:4,health:-3},'🍰 Ba ngày sau mày nhìn bánh là buồn nôn.',8)),
+  choice(20,45,'Công ty tổ chức team building','Sếp bắt nhảy "con vịt" trước 300 người.',
+    option('Nhảy tới bến','EQ +5, vui +5',{eq:5,happiness:5},'🦆 Video điệu nhảy của mày được cả công ty lưu giữ.'),
+    option('Trốn vào nhà vệ sinh','Trái ngang +7',{happiness:3,eq:-3},'🚾 Sếp gọi tên mày ngay trên loa tổng.',7)),
+  choice(21,55,'Bắt quả tang nói xấu sếp','Mày đang kể chuyện sếp thì sếp đứng ngay sau lưng.',
+    option('Xin lỗi đàng hoàng','EQ +5, vui -4',{eq:5,happiness:-4},'💼 Sếp chỉ bảo "lần sau góp ý trực tiếp".'),
+    option('Nói đang kể chuyện phim','Trái ngang +9, EQ -5',{eq:-5,happiness:-5},'🎬 Sếp hỏi phim tên gì. Mày bịa ngay "Sếp Và Tôi".',9)),
+  choice(22,55,'Cuộc họp có thể là email','Một cuộc họp 3 tiếng chỉ để chốt màu nút bấm.',
+    option('Đề xuất kết thúc sớm','Kỹ năng +3, EQ +3',{skill:3,eq:3},'📧 Cuối cùng mọi người chịu gửi email.'),
+    option('Ngủ mở mắt','Sức khỏe +2, trái ngang +6',{health:2},'😴 Mày ngủ vẫn gật đúng nhịp, sếp tưởng đang đồng ý.',6)),
+  choice(20,65,'Lừa đảo tình cảm cấp tốc','Người mới quen nhắn "anh/em yêu" rồi nhờ chuyển 5 triệu.',
+    option('Chặn luôn','IQ +3, EQ +2',{intellect:3,eq:2},'🛡️ Mày né được cú scam, tự thưởng mình ly nước.'),
+    option('Tin vào định mệnh','Tiền -5 triệu, trái ngang +12',{cash:-5000000,happiness:-8},'💸 Tình yêu bay theo số tài khoản. Đúng là vãi chưởng.',12)),
+  choice(25,50,'Đi khách sạn hết nước nóng','Mày vừa gội đầu thì nước nóng tắt ngúm.',
+    option('Gọi lễ tân','EQ +2',{eq:2},'🚿 Lễ tân lên xử lý, mày bớt lạnh lùng theo nghĩa đen.'),
+    option('Cố tắm cho xong','Sức khỏe -3, trái ngang +4',{health:-3},'🥶 Mày run như điện thoại ở chế độ rung.',4)),
+  choice(28,60,'Họ hàng hỏi lương','Đang ăn cơm, bà cô hỏi "tháng cháu kiếm được mấy chục?".',
+    option('Nói đủ sống là được','EQ +4',{eq:4},'🍚 Mày đánh trống lảng bằng một bát canh.'),
+    option('Khoe lương nhân mười','Trái ngang +7, vui +2',{eq:-4,happiness:2},'💰 Hôm sau họ hàng kéo tới hỏi vay tiền.',7)),
+  choice(30,70,'Phát hiện nhóm chat không có mình','Mọi người trong cơ quan có nhóm chat tên "trừ đứa kia".',
+    option('Bỏ qua mà sống','Vui +3, EQ +2',{happiness:3,eq:2},'🙂 Mày tiết kiệm thời gian đọc drama mỗi ngày.'),
+    option('Lập nhóm "trừ cả thế giới"','Trái ngang +6',{eq:-3,happiness:3},'📵 Nhóm có đúng một người: mày.',6)),
+  choice(35,75,'Hàng xóm hát karaoke 2 giờ sáng','Nhạc vang lên như gọi hồn cả khu phố.',
+    option('Nhắc nhở lịch sự','EQ +5',{eq:5},'🎙️ Hàng xóm tắt nhạc, hẹn hát tiếp chiều mai.'),
+    option('Bật loa đối kháng','Trái ngang +8, sức khỏe -3',{health:-3,happiness:4},'🔊 Hai nhà thi nhau hát dở, công an phường đến làm giám khảo.',8)),
+  choice(40,80,'Đi khám vì đau lưng','Bác sĩ hỏi mày ngồi máy tính bao lâu. Câu trả lời khiến bác sĩ im lặng.',
+    option('Chăm vận động','Sức khỏe +8',{health:8},'🧘 Mày bắt đầu tập nhẹ nhàng và bớt đau.'),
+    option('Mua ghế đắt để ngắm','Tiền -3 triệu, trái ngang +4',{cash:-3000000,happiness:3},'🪑 Mày mua ghế xịn nhưng vẫn nằm trên giường làm việc.',4)),
+  choice(50,90,'Lỡ bật camera họp online','Mày đang nhai bánh và gãi bụng thì camera bật.',
+    option('Chào mọi người bình thản','EQ +4',{eq:4},'🎥 Mày chào xong, cả phòng nín cười.'),
+    option('Đổ tại con mèo','Trái ngang +7',{eq:-2,happiness:-2},'🐱 Mọi người hỏi mèo nào biết mở camera.',7)),
+  choice(60,115,'Giải vô địch cờ tướng vỉa hè','Ông hàng xóm bảo mày chỉ là "gà mờ".',
+    option('Chơi tỉnh táo','IQ +2, vui +4',{intellect:2,happiness:4},'♟️ Mày thắng một ván, hàng xóm xin phục thù.'),
+    option('Đánh liều như cao thủ','Trái ngang +5',{happiness:-2},'🐓 Mày thua sau 5 nước, danh hiệu gà mờ được giữ vững.',5)),
+  choice(60,115,'Tranh luận chuyện cây cảnh','Hội dưỡng sinh cãi nhau xem cây nào đắt tiền nhất.',
+    option('Hỏi người trồng cây','EQ +4, IQ +1',{eq:4,intellect:1},'🌱 Cuối cùng hội chuyển sang chăm cây cho khỏe.'),
+    option('Khẳng định cây nhựa vô địch','Trái ngang +6, vui +2',{happiness:2},'🪴 Cả hội cạn lời, riêng mày cười hề hề.',6)),
+  choice(1,115,'Nhân phẩm réo tên','Tự dưng mày cảm thấy vũ trụ đang định bày trò.',
+    option('Giữ bình tĩnh','Hạnh phúc +3',{happiness:3},'🧘 Mày thở sâu, sóng gió đi qua nhẹ nhàng.'),
+    option('Thách trời chơi lớn','Trái ngang +8, may mắn -2',{luck:-2,happiness:-1},'⚡ Mày thách số phận và số phận cười khẩy.',8))
+);
+
+// Biến cố phụ: luôn tự random 2 chuyện/năm, không hiện modal, có ảnh hưởng chỉ số.
+// Ngôn ngữ cố tình bựa/cà khịa. Những trò gợi dục chỉ xuất hiện ở độ tuổi trưởng thành.
+const A=(min,max,text,effect={},absurdity=0,type='event',condition=null,weight=1)=>({min,max,text,effect,absurdity,type,condition,weight});
+const AMBIENT_EVENTS=[
+  // 1–5: tuổi thơ quậy banh nóc
+  A(1,5,'💩 Mày ị một phát long trời lở đất. Bố mẹ mở cửa sổ như chống khí độc.',{happiness:3},5),
+  A(1,5,'🍼 Mày ném bình sữa trúng đầu bố. Cả nhà phong danh hiệu "xạ thủ bỉm".',{happiness:4},4),
+  A(1,5,'👶 Mày ăn dặm rồi bôi cháo lên tóc bà. Bà vẫn khen cháu ngoan.',{eq:1},3),
+  A(1,5,'🧷 Mày giấu chiếc tất bẩn trong hộp bánh. Ba ngày sau cả nhà phá án.',{happiness:2},4),
+  A(1,5,'🦆 Mày gọi con chó là "bố". Bố thật đứng hình mất năm giây.',{eq:1},4),
+  A(1,5,'🛁 Mày tè trong chậu tắm rồi vỗ tay như mới lập kỷ lục.',{happiness:2},5),
+  A(1,5,'🐈 Mày kéo đuôi mèo và bị nó nhìn khinh bỉ. Bài học về ranh giới cá nhân.',{eq:2},2),
+  A(1,5,'🍚 Mày úp nguyên bát cơm lên đầu. Bố bảo chắc con muốn làm đầu bếp.',{happiness:3},3),
+  A(1,5,'📱 Mày nhấn nút gọi nhầm cho sếp của mẹ, mở đầu bằng tiếng khóc như báo động.',{eq:1},4),
+  A(1,5,'🐤 Mày phát âm sai một từ, cả nhà ghi âm làm chuông báo thức.',{happiness:2},2),
+  A(1,5,'🧸 Mày đem gấu bông đi "tắm" trong bồn cầu. Thảm họa vệ sinh cấp quốc gia.',{happiness:-1},6,'bad'),
+  A(1,5,'🍭 Mày làm rớt kẹo rồi nhặt lên thổi phù phù. Vi khuẩn cười nhếch mép.',{health:-1,happiness:2},3),
+  A(1,5,'🚼 Mày tự tháo bỉm chạy vòng quanh nhà, bị phát hiện qua dấu chân bùn.',{health:1},4),
+  A(1,5,'🎂 Mày thổi nến sinh nhật mạnh quá khiến bánh dính mặt chú.',{happiness:3},3),
+  // 6–12: trường lớp và nhà vệ sinh
+  A(6,12,'🚽 Mày vào nhà vệ sinh trường mới biết hết giấy. Đây mới gọi là bài kiểm tra cuộc đời.',{happiness:-3},6,'bad'),
+  A(6,12,'📖 Mày học thuộc lòng nhưng lên bảng đọc nhầm thực đơn quán cơm.',{intellect:1},4),
+  A(6,12,'🧃 Hộp nước trái cây nổ trong cặp, sách vở có hương ổi suốt học kỳ.',{happiness:-2},4,'bad'),
+  A(6,12,'🤡 Mày khoe biết ảo thuật rồi làm mất luôn tiền ăn sáng.',{cash:-20000},4,'bad'),
+  A(6,12,'👟 Mày mang một chiếc giày đen một chiếc trắng, tự nhận là thời trang cao cấp.',{happiness:2},3),
+  A(6,12,'🧹 Cả lớp trực nhật, mày lau bảng khiến phấn bay như mưa tuyết.',{skill:1},3),
+  A(6,12,'🐕 Chạy trốn chó nhà hàng xóm, mày lập kỷ lục chạy nước rút mới.',{health:1},4),
+  A(6,12,'🍞 Mày nhai bánh mì trong lớp, cô gọi trả lời đúng lúc miệng đầy ụ.',{eq:-1},5),
+  A(6,12,'📣 Mày hét "có ma" giữa sân trường, hóa ra là áo khoác treo ngược.',{happiness:2},5),
+  A(6,12,'🎒 Mày quên cặp đi học nhưng nhớ mang đồ ăn vặt. Ưu tiên rất rõ ràng.',{happiness:2,intellect:-1},4),
+  A(6,12,'🥬 Mày lén bỏ rau vào bát bố, bị bắt quả tang bằng camera gia đình.',{eq:-1},4),
+  A(6,12,'💤 Mày ngủ gật lúc chào cờ, giật mình vỗ tay nhầm chỗ.',{happiness:-2},5),
+  A(6,12,'📐 Mày dùng thước kẻ làm kiếm, vô tình gạt đổ hộp bút của cô.',{skill:1},4),
+  A(6,12,'🎨 Tranh mày được treo ở lớp. Phụ huynh hỏi sao con trâu trông giống máy giặt.',{happiness:3},3,'good'),
+  A(6,12,'🎲 Mày giành chiến thắng oẳn tù tì và được làm vua lớp đúng 15 phút.',{eq:2,happiness:2},1,'good'),
+  // 13–17: drama teen, không có tình tiết người lớn
+  A(13,17,'📱 Mày đăng story thất tình dù chưa từng có người yêu. Bạn bè hỏi thăm rần rần.',{happiness:-1},4),
+  A(13,17,'😂 Mày cười trong giờ học và bị cô hỏi "có gì vui kể cả lớp".',{eq:-2},5),
+  A(13,17,'🧋 Mày hẹn crush ở quán trà sữa, đến nơi mới nhớ để ví ở nhà.',{happiness:-3},5,'bad'),
+  A(13,17,'💻 Bài thuyết trình của mày mở đầu bằng tab "meme mèo hét".',{skill:1},5),
+  A(13,17,'🎧 Mày đeo tai nghe hát to trong lớp mà không biết điện thoại chưa phát nhạc.',{eq:-1},6),
+  A(13,17,'📸 Bạn chụp ảnh mày đang ngủ há miệng, meme lớp ra đời.',{happiness:-2},7,'bad'),
+  A(13,17,'👀 Crush nhìn mày hai giây, mày suy luận ra cả một tiểu thuyết tình yêu.',{happiness:3},3),
+  A(13,17,'🚴 Mày tập biểu diễn xe đạp, kết quả là diễn một cú ngã vào bụi cây.',{health:-2},6,'bad'),
+  A(13,17,'🎤 Mày hát karaoke trong sinh nhật bạn, hàng xóm đi tìm nguồn tiếng kêu cứu.',{eq:1},6),
+  A(13,17,'🥲 Bài kiểm tra sai một câu dễ, mày ngồi tiếc nuối như mất sổ đỏ.',{intellect:1,happiness:-1},2),
+  A(13,17,'🧠 Mày phát hiện cách học hiệu quả hơn và dành thêm giờ luyện tập.',{intellect:1,skill:1},0,'good'),
+  A(13,17,'🐸 Mày dùng ảnh ếch làm avatar, cả nhà tưởng tài khoản bị hack.',{happiness:2},3),
+  A(13,17,'🍟 Mày ăn vụng khoai tây chiên ở thư viện. Tiếng nhai vang như tiếng sấm.',{happiness:2},3),
+  A(13,17,'💬 Mày gửi "ừ" cho crush rồi ngồi phân tích ý nghĩa trong 4 tiếng.',{happiness:-2},5),
+  A(13,17,'🧦 Giày ướt mưa khiến tất có mùi kinh hoàng, bạn cùng bàn xin đổi chỗ.',{eq:-1},4),
+  A(13,17,'🕹️ Mày thức chơi game, sáng hôm sau mắt thâm như gấu trúc.',{health:-2,happiness:2},4),
+  // 18–29: văn phòng, phòng trọ, người yêu, tiền nong
+  A(18,29,'💸 Cuối tháng mày mở ví ra xem: hai hóa đơn và một giấc mơ làm giàu.',{happiness:-2},5,'bad'),
+  A(18,29,'🚿 Nhà trọ mất nước đúng lúc đầu đầy dầu gội. Vãi thật, đời biết chọn giờ.',{happiness:-3},7,'bad'),
+  A(18,29,'🍜 Mì gói úp lên sàn. Mày ngồi nhìn nó như nhìn cổ phiếu sập.',{happiness:-2},5,'bad'),
+  A(18,29,'💌 Mày lỡ thả tim ảnh người yêu cũ từ ba năm trước. Điện thoại nóng ran.',{eq:-2},6),
+  A(18,29,'📦 Mày mua khóa học làm giàu 0 đồng, phải đóng phí giữ chỗ 199k.',{cash:-199000},6,'bad'),
+  A(18,29,'🎙️ Mày hát trong nhà tắm trọ, hàng xóm hỏi có cần gọi cứu thương không.',{happiness:3},5),
+  A(18,29,'🍻 Bạn bè rủ đi nhậu, mày uống nước lọc nhưng vẫn phải chia tiền đều.',{cash:-150000,happiness:-2},5,'bad'),
+  A(18,29,'🛵 Mày đặt xe ôm tới nhầm địa chỉ, đứng đợi như tượng đá.',{happiness:-2},4),
+  A(18,29,'🪞 Mày soi gương đi phỏng vấn, phát hiện còn miếng rau dính răng.',{happiness:-1},5),
+  A(18,29,'👕 Mày mặc áo trái ra đường cả buổi. Người lạ khen cá tính.',{happiness:2},4),
+  A(18,29,'🧦 Đôi tất đi làm mốc meo một góc. Đồng nghiệp mở điều hòa hết cỡ.',{eq:-1},6),
+  A(18,29,'🧻 Mày xé nhầm hóa đơn thay vì giấy ghi chú, kế toán đuổi theo.',{skill:1},4),
+  A(18,29,'🪳 Gián bay vào phòng trọ, mày nhảy như idol K-pop dù không có nhạc.',{health:1},5),
+  A(18,29,'📺 Mày học được cách thương lượng tiền lương từ một video thực tế.',{skill:2},0,'good'),
+  A(18,29,'💕 Buổi hẹn hò khá ổn, cho đến khi mày gọi nhầm tên người ta.',{eq:-2,happiness:-3},7,'bad'),
+  A(18,29,'🧋 Mày mua hai cốc trà sữa để an ủi bản thân. Tài khoản khóc thay.',{cash:-100000,happiness:3},2),
+  A(18,29,'🎮 Mày chơi game tới 3 giờ sáng rồi tuyên bố "hôm sau ngủ sớm".',{health:-2,happiness:1},3),
+  A(18,29,'🚪 Mày mở nhầm cửa nhà vệ sinh công cộng. Hai bên cùng muốn xóa ký ức.',{eq:-1},8),
+  A(18,29,'📷 Camera trước mở bất ngờ, một góc mặt khiến mày suy nghĩ về nhân sinh.',{happiness:-1},5),
+  A(18,29,'🧑‍💻 Mày sửa một lỗi khó trong công việc, được sếp khen đúng ba chữ.',{skill:2,happiness:3},0,'good'),
+  A(18,29,'📧 Mày gửi email mà quên file đính kèm, thêm một email xin lỗi kinh điển.',{skill:1},3),
+  A(18,29,'🧠 Mày hoàn thành khóa học khó, cảm giác não đã mọc thêm một nếp nhăn.',{intellect:1,skill:1},0,'good'),
+  A(18,29,'🫠 Mày mở ứng dụng ngân hàng rồi tắt ngay để bảo vệ tinh thần.',{happiness:-2},5,'bad'),
+  A(18,29,'🛒 Flash sale khiến mày mua món đồ "rẻ quá không thể bỏ", chưa dùng lần nào.',{cash:-700000,happiness:2},5,'bad'),
+  A(18,29,'🚕 Tài xế gọi "anh/chị ơi" trong lúc mày đang đứng ngay cạnh xe.',{eq:-1},3),
+  A(18,29,'🎉 Mày nhận thưởng bất ngờ, đủ mua bữa lẩu thịnh soạn.',{cash:1000000,happiness:3},0,'good'),
+  // 30–59: gia đình, làm việc, lo toan
+  A(30,59,'📊 Sếp gọi họp khẩn để công bố một việc lẽ ra nhắn Zalo là xong.',{happiness:-2},4,'bad'),
+  A(30,59,'💩 Mày đau bụng giữa lúc kẹt xe. Thề chưa bao giờ thấy cây cầu dài thế.',{health:-1,happiness:-3},7,'bad'),
+  A(30,59,'🧻 Nhà vệ sinh hết giấy đúng lúc quan trọng. Mày gọi cứu viện như đặc nhiệm.',{eq:1,happiness:-2},7),
+  A(30,59,'👨‍👩‍👧 Họ hàng hỏi bao giờ mua thêm nhà. Mày hỏi lại bao giờ họ mua hộ.',{eq:-1,happiness:2},4),
+  A(30,59,'🛏️ Mày ngủ gật trong cuộc họp online, mở mic đúng lúc ngáy khò khò.',{eq:-2},7),
+  A(30,59,'💼 Mày gửi nhầm ảnh meme sếp vào nhóm có sếp. Cả phòng lặng như tờ.',{happiness:-4},9,'bad'),
+  A(30,59,'🔑 Mày lục nhà tìm chìa khóa suốt 20 phút, hóa ra đang cầm trên tay.',{happiness:-1},4),
+  A(30,59,'🎂 Bánh sinh nhật ghi sai tuổi thêm mười năm. Mày cười mà khóe mắt giật giật.',{happiness:-2},5),
+  A(30,59,'🍲 Mày nấu canh mặn như nước biển, cả nhà uống nước như bị hạn hán.',{skill:1},5),
+  A(30,59,'🪑 Mày ngồi ghế nhựa và nghe tiếng răng rắc. Cái ghế xin nghỉ hưu.',{health:-1},6),
+  A(30,59,'🏦 Ngân hàng thông báo thu phí, mày thấy mình bị "móc túi hợp pháp".',{cash:-150000,happiness:-1},3,'bad'),
+  A(30,59,'🎣 Mày đi câu cá để thư giãn, con cá lớn nhất là lời nói dối lúc về nhà.',{happiness:3},4),
+  A(30,59,'💡 Mày nảy ra sáng kiến tiết kiệm chi phí sinh hoạt.',{cash:500000,skill:1},0,'good'),
+  A(30,59,'🍺 Nhóm bạn nhậu tranh luận chuyện tỷ phú, người giàu nhất bàn là chủ quán.',{eq:1},4),
+  A(30,59,'📱 Mày đăng nhầm ảnh chụp màn hình than phiền đồng nghiệp vào nhóm đồng nghiệp.',{eq:-3,happiness:-3},10,'bad'),
+  A(30,59,'🛵 Đi giao lưu hội phụ huynh, mày bị gọi nhầm là ông/bà của chính con mình.',{happiness:-2},5),
+  A(30,59,'💇 Mày cắt tóc theo ảnh người mẫu, ra về với quả đầu như chổi xể.',{happiness:-2},6),
+  A(30,59,'📈 Khoản đầu tư bất ngờ tăng nhẹ, mày tự nhận là "sói già tài chính".',{cash:500000,happiness:2},2,'good'),
+  A(30,59,'🦷 Mày đi lấy cao răng, nghe bác sĩ nói "cố lên" như đang thi vượt chướng ngại.',{health:2},3,'good'),
+  A(30,59,'🥬 Mày quyết tâm ăn lành mạnh rồi phá kèo bằng hai xiên thịt nướng.',{health:-1,happiness:3},3),
+  A(30,59,'🚗 Mày bấm khóa xe 8 lần vì không nhớ có khóa chưa.',{happiness:-1},3),
+  A(30,59,'🔌 Mày rút nhầm ổ điện phòng làm việc, cả đồng nghiệp đồng loạt quay lại.',{skill:1,eq:-2},8),
+  A(30,59,'📚 Mày đọc xong một cuốn sách khó, cảm giác IQ vừa được xoa dịu.',{intellect:1,happiness:2},0,'good'),
+  A(30,59,'🍛 Quán cơm tăng giá, mày tuyên bố tự nấu từ mai. Mai vẫn ra quán.',{cash:-70000},4),
+  A(30,59,'🏠 Mày sửa được cái vòi nước nhỏ giọt sau ba lần gọi YouTube.',{skill:2,happiness:2},0,'good'),
+  A(30,59,'🧑‍🤝‍🧑 Bạn cũ rủ hợp tác "kèo chắc thắng"; mày tỉnh táo từ chối.',{intellect:1,eq:1},0,'good'),
+  A(30,59,'🍗 Bữa cỗ họ hàng kéo dài 6 tiếng, câu hỏi về lương dài hơn cả bữa.',{happiness:-2},5),
+  A(30,59,'📉 Giá cổ phiếu đỏ lòm, mày tắt điện thoại để giữ huyết áp.',{happiness:-2},4,'bad'),
+  A(30,59,'👟 Mày quyết tâm chạy bộ, chạy được 500 mét đã muốn làm lễ nghỉ hưu.',{health:1},3,'good'),
+  A(30,59,'🤬 Mày buột miệng "đéo tin được" khi hóa đơn điện tăng gấp đôi.',{happiness:-3,cash:-400000},5,'bad'),
+  // 60+ chuyện tuổi già hài hước
+  A(60,115,'🦷 Mày cười trong đám cưới, răng giả suýt rơi vào bát canh.',{happiness:-1},7),
+  A(60,115,'🧓 Mày mắng đứa cháu chơi điện thoại nhiều, rồi lén chơi game cả tối.',{happiness:3},4),
+  A(60,115,'♟️ Thua cờ tướng, mày tuyên bố do gió thổi lệch quân.',{eq:-1},4),
+  A(60,115,'🎤 Mày hát karaoke nhạc trẻ, lũ cháu tưởng loa đang bị lỗi.',{happiness:3},4),
+  A(60,115,'🥬 Mày đi chợ mặc cả được 2 nghìn, vui hơn hồi lĩnh thưởng tháng 13.',{cash:2000,happiness:4},0,'good'),
+  A(60,115,'🌱 Mày chăm cây suốt tuần, cây mọc mạnh nhất lại là cỏ dại.',{happiness:-1},3),
+  A(60,115,'🚲 Mày đạp xe thể dục, bị đứa trẻ 6 tuổi vượt qua rồi quay lại cười.',{health:2,happiness:1},3),
+  A(60,115,'📱 Mày gửi nhầm sticker "haha" vào nhóm họ hàng đang thông báo chuyện buồn.',{eq:-2,happiness:-2},9,'bad'),
+  A(60,115,'🪙 Mày tìm được tiền lẻ trong túi áo từ 20 năm trước, cảm giác như đào vàng.',{cash:50000,happiness:3},0,'good'),
+  A(60,115,'💃 Hội dưỡng sinh kéo mày lên múa, video của mày đạt 30 nghìn lượt xem.',{eq:3,happiness:3},2,'good'),
+  A(60,115,'🍵 Mày pha trà nhạt như nước lọc, vẫn có bạn đến ngồi kể chuyện cả chiều.',{eq:2,happiness:2},0,'good'),
+  A(60,115,'📻 Mày mở đài buổi sáng, hàng xóm bảo giờ này mới là "báo thức của khu phố".',{happiness:2},2),
+  A(60,115,'🏥 Khám định kỳ cho thấy sức khỏe ổn định nhờ chăm đi bộ.',{health:3},0,'good'),
+  A(60,115,'🍲 Mày dạy cháu nấu món gia truyền, cháu cho đường vào nước mắm.',{happiness:3},4),
+  A(60,115,'🧠 Mày tham gia câu lạc bộ đọc sách để giữ đầu óc minh mẫn.',{intellect:1,eq:2},0,'good'),
+  A(60,115,'🧦 Mày giấu tiền trong tất rồi quên mất tất nào, huy động cả nhà tìm kho báu.',{happiness:-2},6),
+  A(60,115,'🎣 Mày kể về con cá to bằng cánh cửa, đứa cháu hỏi bằng chứng đâu.',{happiness:2},3),
+  A(60,115,'📸 Mày dùng filter làm trẻ lại 40 tuổi, đăng ảnh với caption "ngày xưa".',{happiness:3},4),
+  // Bất kỳ tuổi nào: bất ngờ vui dở khóc dở cười
+  A(1,115,'🌈 Một ngày thời tiết đẹp khiến mày thấy cuộc đời còn dễ thương.',{happiness:3},0,'good'),
+  A(1,115,'🍀 Mày vô tình gặp một người tốt và được giúp đúng lúc.',{eq:2,happiness:3},0,'good'),
+  A(1,115,'😵 Mày đi tìm đồ vật suốt mười phút trong khi nó nằm ngay trước mặt.',{happiness:-1},2),
+  A(1,115,'🐈 Mèo hàng xóm nhìn mày như nhìn một nhân viên phục vụ thiếu chuyên nghiệp.',{happiness:1},2),
+  A(1,115,'🌧️ Mày vừa giặt chăn xong thì trời đổ mưa như trút nước.',{happiness:-2},3,'bad'),
+  A(1,115,'🥳 Mày được ai đó khen một câu nhỏ mà vui cả ngày.',{happiness:4},0,'good'),
+  A(1,115,'😬 Mày vấp một bậc thềm giữa đám đông, giả vờ mình đang khởi động.',{eq:-1},4),
+  A(1,115,'🌮 Mày ăn món mới thấy ngon bất ngờ, cuộc đời gỡ gạc được một chút.',{happiness:3},0,'good'),
+  A(1,115,'🧦 Một chiếc tất biến mất khỏi máy giặt. Vũ trụ vẫn chưa giải thích.',{happiness:-1},2),
+  A(1,115,'🧹 Mày dọn phòng và tìm thấy món đồ đã mất từ năm ngoái.',{happiness:2,skill:1},0,'good'),
+  // Điều kiện đặc biệt; mấy chuyện hiếm không chiếm cả bảng
+  A(18,115,'🏦 Tài khoản gia đình giàu có chuyển cho mày một khoản trợ cấp kín tiếng.',{cash:5000000,happiness:2},0,'good',p=>p.wealth>=86,.15),
+  A(18,115,'📉 Dù sinh ra ngậm thìa vàng, mày vẫn mua hớ món đồ đắt gấp đôi giá trị.',{cash:-3000000},6,'bad',p=>p.wealth>=86,.35),
+  A(6,115,'🧠 Mày giải một câu đố hóc búa trong vài giây, người quanh đó cạn lời.',{happiness:3},0,'good',p=>p.intellect>=150,.2),
+  A(18,115,'🤑 Một vé số hiếm hoi trúng giải nhỏ, đủ để mày đãi bạn bè.',{cash:3000000,happiness:4},1,'good',p=>p.luck>=85,.15),
+  A(18,115,'🤯 Mày lỡ gửi tin "vãi cả nồi" trong lúc chia sẻ màn hình trước khách hàng.',{eq:-4,happiness:-4},11,'bad',p=>p.job!=='Thất nghiệp tự do',.7),
+  A(18,115,'🫠 Mày ăn mì gói năm bữa liên tiếp, đến gói gia vị cũng muốn nghỉ việc.',{health:-2,happiness:-2},4,'bad',p=>p.cash<1000000,.65)
+];
+
+// Tự động ghép ngân hàng sự kiện do người chơi tự viết vào kho sự kiện mặc định.
+EVENTS.push(...CUSTOM_CHOICE_EVENTS);
+AMBIENT_EVENTS.push(...CUSTOM_AMBIENT_EVENTS);
+
+function weightedPick(items){
+  const total=items.reduce((s,e)=>s+(e.weight??1),0);
+  let r=Math.random()*total;
+  for(const e of items){r-=(e.weight??1);if(r<0)return e;}
+  return items[items.length-1];
+}
+function randomAmbientEvents(player,count=2){
+  player.recentAmbient??=[];
+  const selected=[];
+  for(let i=0;i<count;i++){
+    const valid=AMBIENT_EVENTS.filter(e=>player.age>=e.min&&player.age<=e.max&&
+      (!e.condition||e.condition(player))&&!selected.includes(AMBIENT_EVENTS.indexOf(e)));
+    let candidates=valid.filter(e=>!player.recentAmbient.includes(AMBIENT_EVENTS.indexOf(e)));
+    if(!candidates.length)candidates=valid;
+    if(!candidates.length)break;
+    const chosen=weightedPick(candidates),idx=AMBIENT_EVENTS.indexOf(chosen);
+    selected.push(idx);player.recentAmbient.push(idx);
+  }
+  player.recentAmbient=player.recentAmbient.slice(-16);
+  return selected.map(i=>AMBIENT_EVENTS[i]);
+}
+
+// Sự kiện có lựa chọn cũng hạn chế lặp lại nhiều năm liên tiếp.
+function randomLifeEvent(player){
+  player.recentChoices??=[];
+  const valid=EVENTS.filter(e=>player.age>=e.min&&player.age<=e.max&&(!e.condition||e.condition(player)));
+  const fresh=valid.filter(e=>!player.recentChoices.includes(EVENTS.indexOf(e)));
+  const chosen=weightedPick(fresh.length?fresh:valid);
+  player.recentChoices.push(EVENTS.indexOf(chosen));
+  player.recentChoices=player.recentChoices.slice(-7);
+  return chosen;
+}
+
+
+// ===== actions.js =====
+
+const mil=n=>n*1e6;
+const make=(id,title,icon,description,button,options={})=>({id,title,icon,description,button,cost:0,minAge:0,...options});
+function getActions(p,category){
+  if(category==='study'){
+    if(p.age<6)return [
+      make('babble','Tập nói & Tập đi','🍼','Rèn khả năng nói và bước đi, nền tảng cho một kiếp người.','Tập luyện',{effect:{intellect:4,health:2,eq:1},log:'🍼 Mày luyện nói, cả nhà nghe nhầm thành câu đòi thừa kế.'}),
+      make('color','Tập tô màu','🎨','Phát triển trí tưởng tượng bằng những nét vẽ khó hiểu.','Tô màu',{effect:{intellect:3,happiness:5},log:'🎨 Bức tranh đầu tay được cả nhà khen là nghệ thuật trừu tượng.'}),
+      make('play-blocks','Xếp hình','🧩','Chơi thông minh từ nhỏ, đỡ bị gọi là ngáo.','Xếp hình',{effect:{intellect:5,skill:2},log:'🧩 Mày xây một lâu đài rồi tự tay phá tan công trình.'}),
+      make('family-story','Nghe kể chuyện','📚','Nghe chuyện cổ tích trước khi ngủ.','Nghe truyện',{effect:{eq:3,happiness:4},log:'📖 Mày nghe hết chuyện cổ tích và bắt đầu nghi ngờ logic của nàng Bạch Tuyết.'})
+    ];
+    if(p.age<18)return [
+      make('school','Học hành chăm chỉ','🎓','Cắm đầu học, hy vọng tương lai không phải ăn mì gói.','Học bài',{effect:{intellect:7,skill:2,happiness:-3},log:'📚 Mày học cật lực, đầu như máy tính sắp cháy.'}),
+      make('read','Đọc Sách & Tự Học','📗','Tăng trí tuệ mỗi ngày, không sợ bị gọi là học vẹt.','Mua sách (-200k)',{cost:200000,effect:{intellect:5,happiness:2},log:'📕 Mày mua sách. Lần này còn đọc thật chứ không chỉ chụp ảnh đăng story.'}),
+      make('club','Tham Gia Câu Lạc Bộ','🎭','Luyện khả năng giao tiếp, mở rộng mối quan hệ.','Tham gia',{effect:{eq:7,happiness:3},log:'🎭 Mày gia nhập câu lạc bộ và nhận ra họp nhóm cũng là một môn thể thao.'}),
+      make('sport-teen','Tập Thể Thao','🏃','Rèn sức khỏe, không phải chỉ biết nằm lướt mạng.','Tập luyện',{effect:{health:7,happiness:3},log:'🏃 Mày chịu đi vận động thay vì lăn trên giường.'})
+    ];
+    return [
+      make('university','Học Đại Học','🎓','Tốn 40 triệu/năm. Tăng mạnh Trí Tuệ & Kỹ Năng.','Đăng ký học (-40 Triệu)',{cost:mil(40),effect:{intellect:13,skill:13,happiness:-4},featured:true,log:'🎓 Mày đóng học phí đại học. Kiến thức vào đầu, tiền ra khỏi ví.'}),
+      make('course','Khóa Học Ngắn Hạn','🏅','Tốn 10 triệu. Tăng kỹ năng chuyên môn nhanh chóng.','Đăng ký (-10 Triệu)',{cost:mil(10),effect:{skill:10,intellect:3},log:'🏅 Mày học một khóa ngắn hạn và có chứng chỉ khoe trên mạng.'}),
+      make('read-adult','Đọc Sách & Tự Học','📗','Tốn ít tiền (500k). Tăng chút Trí Tuệ và Hạnh Phúc.','Mua sách (-500k)',{cost:500000,effect:{intellect:5,happiness:3},log:'📚 Mày đọc hết một quyển sách mà không ngủ gật, một kỳ tích.'}),
+      make('gym','Tập Gym / Thể Thao','🏋️','Tốn 5 triệu/năm. Tăng Sức Khỏe và Hạnh Phúc.','Đăng ký Gym (-5 Triệu)',{cost:mil(5),effect:{health:11,happiness:5},log:'💪 Mày tập gym chăm chỉ, cơ bắp chưa thấy nhưng story thì có đủ.'})
+    ];
+  }
+  if(category==='work'){
+    if(p.age<16)return [
+      make('chores','Làm việc nhà','🧹','Phụ bố mẹ và học cách chăm sóc bản thân.','Làm việc nhà',{effect:{skill:3,eq:2,happiness:-1},log:'🧹 Mày quét nhà. Mẹ vẫn bảo còn bụi dưới gầm bàn.'}),
+      make('help-shop','Phụ bán hàng','🛒','Học kinh doanh từ những việc nhỏ.','Phụ việc',{effect:{skill:4,eq:3,cash:50000},log:'🛍️ Mày phụ bán hàng và được thưởng 50k, cảm giác như doanh nhân.'}),
+      make('learn-craft','Tập kỹ năng thực tế','🛠️','Làm đồ thủ công, sửa đồ và học tự lập.','Luyện kỹ năng',{effect:{skill:6,intellect:2},log:'🛠️ Mày học sửa đồ, cuối cùng có một chiếc quạt quay ngược.'}),
+      make('dream-job','Tìm nghề mơ ước','🚀','Mơ ước làm phi hành gia, ca sĩ hay chủ tịch.','Lên kế hoạch',{effect:{happiness:4,intellect:2},log:'🚀 Mày vẽ kế hoạch làm tỷ phú vào năm 20 tuổi.'})
+    ];
+    if(p.age<18)return [
+      make('part-time-teen','Làm Thêm Cuối Tuần','🛵','Kiếm 1,5 triệu, đổi bằng chút sức khỏe.','Làm thêm (+1,5 Triệu)',{effect:{cash:mil(1.5),skill:3,health:-2},log:'🛵 Mày nhận làm thêm và biết giá trị của một ngày cuối tuần.'}),
+      make('intern-teen','Tập Sự Không Lương','💼','Học kinh nghiệm trong môi trường chuyên nghiệp.','Xin thực tập',{effect:{skill:7,happiness:-2},log:'💼 Mày thực tập không lương, được trả bằng "kinh nghiệm quý báu".'}),
+      make('sell-used','Bán Đồ Cũ','📦','Thanh lý đồ không dùng, lấy tiền tiêu vặt.','Bán đồ (+500k)',{effect:{cash:500000,happiness:1},log:'📦 Mày bán vài món cũ và phát hiện nhà mình nhiều thứ linh tinh.'}),
+      make('side-hustle','Học Làm Freelancer','💻','Rèn kỹ năng tự kiếm tiền trên mạng.','Bắt đầu',{effect:{skill:5,intellect:2},log:'💻 Mày tạo hồ sơ freelancer, ngày đầu có 0 khách nhưng 3 lượt xem.'})
+    ];
+    return [
+      make('job','Xin Việc / Đổi Việc','💼',`Việc hiện tại: ${p.job}. Kỹ năng cao dễ nhận lương tốt hơn.`,'Gửi CV đi phỏng vấn',{apply: q=>{
+        const success=Math.random() < Math.min(.95,.52+(q.skill+q.intellect)/500);
+        if(!success)return {effect:{happiness:-3,skill:2},log:'📩 Nhà tuyển dụng cảm ơn vì đã quan tâm, rồi mất hút như người yêu cũ.',absurdity:2};
+        const base=rand(7,13)*mil(12);
+        const salary=base+Math.round(q.skill*mil(.75))+Math.round(q.intellect*mil(.25));
+        const old=q.salary; q.salary=Math.max(old,salary);q.job=pick(['Nhân viên văn phòng','Lập trình viên','Chuyên viên kinh doanh','Nhân viên marketing','Chuyên viên vận hành']);
+        return {effect:{skill:4,happiness:5},log:`💼 Mày được nhận làm ${q.job}, thu nhập ${Math.round(q.salary/1e6)} triệu/năm.`};
+      }}),
+      make('overtime','Làm Thêm / Freelance','💻','Tăng thu nhập ngay, bớt thời gian nghỉ ngơi.','Cày thêm (+4 Triệu)',{effect:{cash:mil(4),health:-4,happiness:-2,skill:3},log:'💻 Mày cày thêm việc tới khuya, kiếm được 4 triệu và một đôi mắt thâm.'}),
+      make('startup','Khởi Nghiệp','🚀','Bỏ vốn 50 triệu. Cơ hội đổi đời hoặc ăn mì gói.','Mở công ty (-50 Triệu)',{cost:mil(50),apply:q=>{
+        if(Math.random() < .32+q.skill/300+q.luck/500){q.job='Chủ doanh nghiệp';q.salary=Math.max(q.salary,rand(180,600)*1e6);return {effect:{happiness:13,skill:8},log:'🚀 Công ty bắt đầu có khách. Mày lên chức CEO, tự phong cũng được!'};}
+        return {effect:{health:-7,happiness:-14,skill:7},log:'📉 Startup thất bại. Mày thành chuyên gia kể chuyện khởi nghiệp.',absurdity:12};
+      }}),
+      make('resign','Nghỉ Việc Xả Hơi','🌴','Bỏ lương cố định để đổi lấy tự do tinh thần.','Nộp đơn nghỉ việc',{disabledWhen:q=>q.salary===0,apply:q=>{q.salary=0;q.job='Thất nghiệp tự do';return {effect:{happiness:12,health:5},log:'🌴 Mày nghỉ việc. Sáng thứ hai tự do nhưng tài khoản hơi run.'};}})
+    ];
+  }
+  if(category==='life'){
+    const child=p.age<18;
+    return [
+      child?make('play','Vui Chơi Cùng Bạn','🪁','Thỏa sức quậy phá, tuổi thơ có một lần.','Đi chơi',{effect:{happiness:9,eq:4,health:2},log:'🪁 Mày đi chơi với bạn và về nhà với đôi dép bám đầy bùn.'}):make('travel','Đi Du Lịch','✈️','Tiêu 8 triệu để đổi lấy kỷ niệm và ảnh sống ảo.','Xách ba lô (-8 Triệu)',{cost:mil(8),effect:{happiness:14,health:2,eq:3},log:'✈️ Mày đi du lịch, chụp 400 ảnh và đăng 2 tấm.'}),
+      make('family','Ở Bên Gia Đình','🏠','Dành thời gian cho những người thật sự quan trọng.','Quây quần',{effect:{happiness:8,eq:5},log:'🏠 Mày dành thời gian cho gia đình, phát hiện mọi người cũng có drama riêng.'}),
+      child?make('sleep','Ngủ Đủ Giấc','😴','Hồi sức bằng cách ngủ một giấc ngon.','Đi ngủ sớm',{effect:{health:7,happiness:4},log:'😴 Mày ngủ đủ giấc và dậy như người được hồi sinh (chỉ là cảm giác).'}):make('romance','Hẹn Hò / Tìm Người Yêu','💕','Dũng cảm mở cửa trái tim. Cưới xin cũng là random.','Đi hẹn hò (-2 Triệu)',{cost:mil(2),apply:q=>{
+        if(q.marriage==='Đã kết hôn')return {effect:{happiness:8,eq:3},log:'💞 Mày hâm nóng tình cảm với người bạn đời.'};
+        if(Math.random()<.22+q.eq/250){q.marriage='Đang hẹn hò';return {effect:{happiness:12,eq:4},log:'💘 Buổi hẹn thành công! Cuối cùng cũng có người chịu nghe mày kể chuyện.'};}
+        return {effect:{happiness:-4,eq:3},log:'🥀 Người ta bảo "chúng mình hợp làm bạn hơn".',absurdity:3};
+      }}),
+      make('doctor','Khám Sức Khỏe','❤️','Khám tổng quát và chăm sóc bản thân.','Khám bệnh (-1 Triệu)',{cost:mil(1),effect:{health:11,happiness:2},log:'🩺 Bác sĩ bảo vẫn cứu được, nhưng nhớ ngủ sớm.'}),
+      ...(!child?[
+        make('marry','Kết Hôn','💍','Nếu đã có người yêu, hai người có thể tiến tới hôn nhân.','Tổ chức cưới (-30 Triệu)',{cost:mil(30),disabledWhen:q=>q.marriage!=='Đang hẹn hò'||q.age<20,apply:q=>{q.marriage='Đã kết hôn';return {effect:{happiness:14,eq:4},log:'💍 Hai người chính thức cưới nhau! Họ hàng đã sẵn sàng hỏi bao giờ có con.'};}}),
+        make('children','Sinh Con','🧸','Gia đình thêm thành viên, trách nhiệm và chi phí cũng tăng.','Đón con chào đời (-8 Triệu)',{cost:mil(8),disabledWhen:q=>q.marriage!=='Đã kết hôn'||q.age<20||q.age>55||q.children>=4,apply:q=>{q.children++;return {effect:{happiness:12,health:-4},log:'🧸 Gia đình đón thêm một em bé. Từ nay giấc ngủ là thứ xa xỉ.'};}}),
+        make('buy-house','Mua Nhà Riêng','🏡','Một căn nhà giá 350 triệu. Không còn phải đi ở trọ.','Mua nhà (-350 Triệu)',{cost:mil(350),disabledWhen:q=>q.house==='Nhà riêng',apply:q=>{q.house='Nhà riêng';return {effect:{happiness:15},log:'🏡 Mày mua được nhà riêng. Thoát kiếp thuê trọ, gia nhập hội đóng tiền sửa ống nước.'};}}),
+        make('buy-car','Mua Ô Tô','🚗','Tậu xe giá 90 triệu. Tiện đi lại, khoe nhẹ với họ hàng.','Mua xe (-90 Triệu)',{cost:mil(90),disabledWhen:q=>q.vehicle==='Ô tô',apply:q=>{q.vehicle='Ô tô';return {effect:{happiness:8},log:'🚗 Mày tậu một chiếc ô tô. Từ nay có thêm sở thích đi rửa xe.'};}})
+      ]:[])
+    ];
+  }
+  if(category==='finance'){
+    if(p.age<16)return [
+      make('piggy','Bỏ Ống Heo','🐷','Để dành tiền mua thứ mình thích.','Tiết kiệm',{effect:{cash:100000,skill:1},log:'🐷 Mày nhận lì xì và bỏ ống heo được 100k.'}),
+      make('learn-money','Học Cách Dùng Tiền','🧮','Nắm các khái niệm tiêu và tiết kiệm.','Học tài chính',{effect:{intellect:5,skill:2},log:'🧮 Mày học rằng tiền không mọc từ cây, kể cả cây ATM.'}),
+      make('help-parents','Giúp Nhà Quản Chi','🛍️','Giúp bố mẹ ghi chép chi tiêu.','Ghi sổ',{effect:{skill:4,eq:2},log:'🛍️ Mày ghi chi tiêu và phát hiện tiền trà sữa của nhà hơi nhiều.'}),
+      make('money-wish','Ước Làm Tỷ Phú','🌟','Không tốn tiền. Chỉ tốn niềm tin.','Ước thật mạnh',{effect:{happiness:4},log:'🌟 Mày ước trở thành tỷ phú. Vũ trụ đã xem nhưng chưa trả lời.'})
+    ];
+    return [
+      make('invest','Gửi Tiết Kiệm / Đầu Tư','📈','Bỏ 5 triệu vào danh mục. Giá trị lên xuống theo từng năm.','Đầu tư (-5 Triệu)',{cost:mil(5),apply:q=>{q.invested+=mil(5);return {effect:{intellect:2},log:'📈 Mày bỏ 5 triệu vào danh mục. Từ nay mỗi lần xem thị trường đều thót tim.'};}}),
+      make('withdraw','Rút Tiền Đầu Tư','🏦','Rút tối đa 5 triệu từ danh mục đang nắm giữ.','Rút về ví (+tối đa 5 Triệu)',{disabledWhen:q=>q.invested<=0,apply:q=>{const amount=Math.min(mil(5),q.invested);q.invested-=amount;q.cash+=amount;return {log:`🏦 Mày rút ${Math.round(amount/1e5)/10} triệu từ khoản đầu tư.`};}}),
+      make('lottery','Thử Vận May','🍀','Mua vé số 200k. Trúng lớn thì cả xóm biết.','Mua vé (-200k)',{cost:200000,apply:q=>{
+        if(Math.random()<.005+q.luck/2000){const prize=rand(100,500)*1e6;q.cash+=prize;q.wonLottery=true;return {effect:{happiness:25},log:`🎉 TRÚNG SỐ! Mày đút túi ${Math.round(prize/1e6)} triệu. Họ hàng bỗng rất thân!`,absurdity:8};}
+        return {effect:{happiness:-2},log:'🎟️ Vé số không trúng. Mày tài trợ cho giấc mơ của người khác.',absurdity:2};
+      }}),
+      make('charity','Làm Từ Thiện','🤲','Cho đi 1 triệu, tăng kết nối và sự hài lòng.','Quyên góp (-1 Triệu)',{cost:mil(1),effect:{eq:6,happiness:6},log:'🤲 Mày quyên góp một phần tiền để giúp người khác.'})
+    ];
+  }
+  return [];
+}
+
+
+// ===== leaderboard.js =====
+
+const TYPES=['rich','old','absurd','iq'];
+let onlineBoards=null;
+function setOnlineBoards(data){
+  onlineBoards=data&&typeof data==='object'?Object.fromEntries(TYPES.map(k=>[k,Array.isArray(data[k])?data[k]:[]])):null;
+}
+function isOnlineBoard(){return onlineBoards!==null;}
+function loadBoards(){
+  if(onlineBoards!==null)return onlineBoards;
+  try{
+    const x=JSON.parse(localStorage.getItem(CONFIG.BOARD_KEY));
+    return Object.fromEntries(TYPES.map(k=>[k,Array.isArray(x?.[k])?x[k]:[]]));
+  }catch{return Object.fromEntries(TYPES.map(k=>[k,[]]));}
+}
+function recordDeath(player){
+  // ONLY offline mode saves scores locally. Online mode records scores on the server.
+  if(onlineBoards!==null)return onlineBoards;
+  const boards=loadBoards();
+  const entry={id:player.id,name:player.name,age:player.age,cash:player.cash+player.invested,
+    absurdity:player.absurdity,iq:player.peakIQ??player.intellect,birthIQ:player.birthIQ??player.intellect,
+    reason:player.deathReason,job:player.job};
+  const compare={rich:(a,b)=>b.cash-a.cash,old:(a,b)=>b.age-a.age,
+    absurd:(a,b)=>b.absurdity-a.absurdity,iq:(a,b)=>(b.iq||0)-(a.iq||0)||(b.birthIQ||0)-(a.birthIQ||0)};
+  for(const type of TYPES){
+    boards[type]=boards[type].filter(e=>e.id!==entry.id).concat(entry).sort(compare[type]).slice(0,10);
+  }
+  try{localStorage.setItem(CONFIG.BOARD_KEY,JSON.stringify(boards));}catch{}
+  return boards;
+}
+
+
+// ===== lifeArchive.js =====
+
+
+// Mỗi kiếp lưu riêng: không cắt nhật ký theo giới hạn top 10.
+const lifeKey=id=>`${CONFIG.ARCHIVE_LIFE_PREFIX}${id}`;
+let serverArchives=[];
+const serverDetails=new Map();
+function setServerArchives(list){serverArchives=Array.isArray(list)?list:[];}
+function setServerLife(row){
+  if(!row?.state?.player)return;
+  const p=row.state.player;
+  serverDetails.set(String(row.id),{
+    ...metadata(p),id:String(row.id),lifeNumber:row.life_number,
+    peakIQ:p.peakIQ,birthIQ:p.birthIQ,health:p.health,eq:p.eq,
+    house:p.house,marriage:p.marriage,children:p.children,
+    reason:p.deathReason,history:p.history||[],legacy:false
+  });
+}
+
+function readIndex(){
+  try{
+    const data=JSON.parse(localStorage.getItem(CONFIG.ARCHIVE_INDEX_KEY)||'[]');
+    return Array.isArray(data)?data:[];
+  }catch{return [];}
+}
+function metadata(p){
+  return {id:String(p.id),lifeNumber:p.lifeNumber??null,name:p.name,age:p.age,
+    job:p.job,reason:p.deathReason,iq:p.peakIQ??p.intellect,
+    cash:(p.cash||0)+(p.invested||0),archivedAt:p.archivedAt||Date.now(),
+    historyCount:p.history?.length||0,legacy:false};
+}
+function archiveLife(player){
+  if(!player||player.alive||!player.id)return {ok:false,message:'Kiếp chưa kết thúc.'};
+  const id=String(player.id),key=lifeKey(id);
+  try{
+    if(localStorage.getItem(key))return {ok:true,alreadySaved:true};
+    const snapshot={...metadata(player),gender:player.gender,
+      cashOnHand:player.cash,invested:player.invested,salary:player.salary,
+      health:player.health,happiness:player.happiness,
+      intellect:player.intellect,birthIQ:player.birthIQ??player.intellect,
+      peakIQ:player.peakIQ??player.intellect,eq:player.eq,
+      beauty:player.beauty,skill:player.skill,wealth:player.wealth,luck:player.luck,
+      marriage:player.marriage,house:player.house,vehicle:player.vehicle,
+      children:player.children,absurdity:player.absurdity,
+      traits:[...(player.traits||[])],
+      history:(player.history||[]).map(({id,age,text,type})=>({id,age,text,type}))};
+    localStorage.setItem(key,JSON.stringify(snapshot));
+    const index=readIndex().filter(item=>String(item.id)!==id);
+    index.unshift(metadata(player));
+    try{localStorage.setItem(CONFIG.ARCHIVE_INDEX_KEY,JSON.stringify(index));}
+    catch(error){localStorage.removeItem(key);throw error;}
+    return {ok:true};
+  }catch(error){return {ok:false,message:'Bộ nhớ trình duyệt đã đầy hoặc bị chặn. Không thể lưu nhật ký kiếp này.',error};}
+}
+function listArchivedLives(){
+  const index=readIndex();
+  const lives=index.filter(item=>{
+    try{return !!localStorage.getItem(lifeKey(String(item.id)));}
+    catch{return false;}
+  });
+  const ids=new Set(lives.map(item=>String(item.id)));
+  for(const item of serverArchives){
+    if(!item?.id||ids.has(String(item.id)))continue;
+    ids.add(String(item.id));
+    lives.push({id:String(item.id),lifeNumber:item.lifeNumber,name:item.name,
+      age:item.age,job:'Đã kết thúc',reason:item.reason,iq:item.iq,
+      cash:0,historyCount:item.historyCount,legacy:false,serverOnly:true,archivedAt:0});
+  }
+  // Bản cũ chưa có kho kiếp: khôi phục được phần tóm tắt từ BXH,
+  // nhưng không bịa thêm nhật ký đã mất khỏi save cũ.
+  const boards=loadBoards();
+  for(const entries of Object.values(boards))for(const entry of entries){
+    if(!entry?.id||ids.has(String(entry.id)))continue;
+    ids.add(String(entry.id));
+    lives.push({id:String(entry.id),lifeNumber:null,name:entry.name||'Vô danh',
+      age:entry.age??0,job:entry.job||'Không rõ',reason:entry.reason||'Không rõ',
+      iq:entry.iq||0,cash:entry.cash||0,historyCount:0,legacy:true,archivedAt:0});
+  }
+  return lives.sort((a,b)=>Number(b.lifeNumber??-1)-Number(a.lifeNumber??-1)||b.archivedAt-a.archivedAt);
+}
+function getArchivedLife(id){
+  const key=String(id);
+  if(serverDetails.has(key))return serverDetails.get(key);
+  try{
+    const snapshot=JSON.parse(localStorage.getItem(lifeKey(key))||'null');
+    if(snapshot?.id===key && Array.isArray(snapshot.history))return snapshot;
+  }catch{}
+  // Chỉ có dữ liệu từ bảng xếp hạng cũ — hiển thị minh bạch.
+  const legacy=listArchivedLives().find(life=>String(life.id)===key&&life.legacy);
+  return legacy?{...legacy,history:[]}:null;
+}
+
+
+// ===== engine.js =====
+
+
+
+
+
+
+function loadGame(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEY));
+    if(saved && saved.player && typeof saved.player.age==='number' && Array.isArray(saved.player.history)){
+      const p=saved.player;
+      p.birthIQ??=p.intellect;p.peakIQ??=p.intellect;
+      p.recentAmbient??=[];p.yearlyAmbient??=0;
+      p.traits??=[];p.actionUses??={};
+      // Khi nâng cấp từ v0.3, lưu lại kiếp đã chết còn nằm trong save.
+      if(!p.alive)archiveLife(p);
+      return saved;
+    }
+  }catch{}
+  return newGame();
+}
+function newGame(){
+  let life=Number(localStorage.getItem(CONFIG.COUNT_KEY)||'0');
+  life=Number.isFinite(life)?life+1:1;
+  localStorage.setItem(CONFIG.COUNT_KEY,String(life));
+  const state={player:createPlayer(life),activeTab:'study'};
+  saveGame(state);return state;
+}
+function saveGame(state){
+  try{if(typeof localStorage !== 'undefined')localStorage.setItem(CONFIG.STORAGE_KEY,JSON.stringify(state));}
+  catch{ /* private browser mode: game still runs in memory */ }
+}
+function recalcExpenses(p){
+  if(p.age<18)return 0;
+  const base=p.age<25?30e6:p.age<60?42e6:30e6;
+  const housing=p.house==='Nhà riêng'?0:8e6;
+  return base+housing+p.children*5e6+(p.marriage==='Đã kết hôn'?10e6:0);
+}
+function performAction(state,actionId){
+  const p=state.player;
+  if(!p.alive)return {ok:false,message:'Kiếp này đã kết thúc. Không có nút hồi sinh!'};
+  if(p.pendingEvent)return {ok:false,message:'Giải quyết biến cố hiện tại trước đã!'};
+  if(p.actionsLeft<=0)return {ok:false,message:'Hết lượt rồi! Bấm QUA NĂM MỚI.'};
+  const action=getActions(p,state.activeTab).find(a=>a.id===actionId);
+  if(!action)return {ok:false,message:'Hành động không tồn tại.'};
+  if(p.age<action.minAge)return {ok:false,message:'Chưa đủ tuổi.'};
+  if(p.actionUses[action.id])return {ok:false,message:'Hành động này đã thực hiện trong năm nay.'};
+  if(action.disabledWhen?.(p))return {ok:false,message:'Chưa đủ điều kiện để thực hiện.'};
+  if(p.cash<action.cost)return {ok:false,message:`Không đủ tiền! Cần ${formatMoney(action.cost)} VND.`};
+  p.cash-=action.cost;
+  const result=action.apply?action.apply(p):{effect:action.effect,log:action.log};
+  applyEffects(p,result.effect);
+  p.absurdity+=(result.absurdity||0);
+  p.actionsLeft--;
+  p.actionUses[action.id]=true;
+  addLog(p,result.log||'✨ Mày vừa làm một việc không thể giải thích được.',result.absurdity?'event':'normal');
+  if(p.health<=0)die(p,'Kiệt sức sau một loạt lựa chọn khó đỡ.');
+  saveGame(state);
+  return {ok:true,message:'Đã thực hiện hành động!'};
+}
+function die(p,reason){
+  if(!p.alive)return;
+  p.alive=false;p.pendingEvent=null;p.deathReason=reason;
+  addLog(p,`🪦 Mày qua đời ở tuổi ${p.age}. Nguyên nhân: ${reason} Không được hồi sinh, đúng luật game.`,'death');
+  if(typeof localStorage !== 'undefined')recordDeath(p);
+  if(typeof localStorage !== 'undefined')archiveLife(p);
+}
+function advanceYear(state){
+  const p=state.player;
+  if(!p.alive)return {ok:false,message:'Chết rồi thì không được qua năm mới!'};
+  if(p.pendingEvent)return {ok:false,message:'Phải chọn cách xử lý biến cố trước.'};
+  p.age++;p.year++;p.actionsLeft=CONFIG.ACTIONS_PER_YEAR;p.actionUses={};p.yearlyAmbient=0;
+  p.yearlyExpenses=recalcExpenses(p);
+  if(p.age<18){
+    const allowance=rand(1,4)*100000;
+    p.cash+=allowance;
+    if(p.age===6){p.job='Học sinh tiểu học';addLog(p,'🎒 Ngày đầu đi học. Mày nhận ra bài tập về nhà không phải truyền thuyết.','event');}
+    if(p.age===12){p.job='Học sinh trung học';addLog(p,'📓 Mày bước vào tuổi nổi loạn, bắt đầu hỏi "tại sao" mọi thứ.','event');}
+    if(p.age===16){p.job='Học sinh cấp ba';addLog(p,'🎓 Tuổi 16, mày bắt đầu nghĩ nghiêm túc về tương lai.','event');}
+  }else{
+    if(p.age===18){p.job='Thất nghiệp tự do';addLog(p,'🎉 Mày vừa tròn 18 tuổi! Chính thức bước chân vào đời, hóa đơn bắt đầu tìm tới.','event');}
+    const delta=p.salary-p.yearlyExpenses;
+    p.cash=Math.max(0,p.cash+delta);
+    if(delta<0 && p.cash<=0){applyEffects(p,{happiness:-9,health:-3});p.absurdity+=3;addLog(p,'🍜 Đầu năm kiểm tra ví thấy gần như trống rỗng. Mì gói lại lên ngôi.','bad');}
+    else if(delta>=0)addLog(p,`💼 Tổng kết năm: thu nhập sau chi phí +${formatMoney(delta)} VND.`,'good');
+  }
+  if(p.invested>0){
+    const rate=(rand(-22,27)+Math.floor((p.luck-50)/12))/100;
+    const change=Math.round(p.invested*rate);
+    p.invested=Math.max(0,p.invested+change);
+    addLog(p,`${change>=0?'📈':'📉'} Danh mục đầu tư ${change>=0?'lãi':'lỗ'} ${formatMoney(Math.abs(change))} VND.` ,change>=0?'good':'bad');
+  }
+  // Càng già xác suất tử vong tự nhiên càng tăng; sức khỏe kém làm rủi ro cao.
+  const deathChance=p.age<35?.00005:p.age<55?.001:p.age<70?.007:p.age<85?.035:p.age<100?.11:.30;
+  const healthRisk=p.health<35?(35-p.health)/250:0;
+  if(p.health<=0||p.age>=CONFIG.MAX_AGE||Math.random()<deathChance+healthRisk){
+    const reason=p.health<=0?'Sức khỏe tụt về 0.':p.age>=CONFIG.MAX_AGE?'Sống đủ lâu để thành truyền thuyết.':p.age<50?'Một tai nạn xui xẻo không báo trước.':'Tuổi tác và sức khỏe không còn cho phép.';
+    die(p,reason);saveGame(state);return {ok:true,died:true};
+  }
+  p.health=clamp(p.health-(p.age>60?rand(1,3):rand(0,2)));
+  if(p.age>=18 && p.salary===0)p.happiness=clamp(p.happiness-2);
+  // Hai biến cố phụ tự diễn biến, không cần chọn đáp án.
+  // Chúng chạy cả với +1 tuổi lẫn nút tự động 5 giây/năm.
+  for(const event of randomAmbientEvents(p,CONFIG.AMBIENT_EVENTS_PER_YEAR)){
+    applyEffects(p,event.effect||{});
+    p.absurdity+=event.absurdity||0;
+    addLog(p,event.text,event.type||'event');
+    p.yearlyAmbient++;
+    if(p.health<=0){
+      die(p,`Dính cú vận đen khó đỡ: ${event.deathReason||'biến cố cuộc đời'}.`);
+      saveGame(state);return {ok:true,died:true};
+    }
+  }
+  const event=randomLifeEvent(p);
+  p.pendingEvent={title:event.title,description:event.description,choices:event.choices};
+  saveGame(state);
+  return {ok:true,died:false};
+}
+function chooseEvent(state,index){
+  const p=state.player;
+  if(!p.alive||!p.pendingEvent)return {ok:false};
+  const event=p.pendingEvent;
+  const choice=event.choices[index];
+  if(!choice)return {ok:false};
+  applyEffects(p,choice.effect);
+  p.absurdity+=choice.absurdity||0;
+  addLog(p,choice.text,'event');
+  p.pendingEvent=null;
+  if(p.health<=0)die(p,'Một lựa chọn tai hại khiến sức khỏe chạm đáy.');
+  saveGame(state);
+  return {ok:true};
+}
+function setName(state,name){
+  const value=name.trim().replace(/\s+/g,' ').slice(0,30);
+  if(value.length<2)return {ok:false,message:'Tên phải có ít nhất 2 ký tự.'};
+  state.player.name=value;
+  saveGame(state);return {ok:true};
+}
+
+
+// ===== ui.js =====
+
+
+
+
+
+const $=id=>document.getElementById(id);
+const fmt=v=>formatMoney(v)+' VND';
+function bar(name,value,icon,cls,max=100,unit='%'){
+  return `<div class="stat"><div class="stat-line"><span class="left">${icon} ${name}</span><span class="val ${cls}">${Math.round(value)}${unit}</span></div><div class="bar"><div class="bar-fill fill-${cls==='pink'?'health':cls==='yellow'?'happiness':cls==='blue'?'intellect':'skill'}" style="width:${Math.max(0,Math.min(100,value/max*100))}%"></div></div></div>`;
+}
+function renderStats(p){
+  $('player-panel').innerHTML=`
+    <div class="identity"><div class="avatar" aria-label="Avatar ${escapeHTML(p.name)}">${getAvatar(p)}</div>
+      <div class="identity-info"><div class="name-line"><h1 title="${escapeHTML(p.name)}">${escapeHTML(p.name)}</h1><button class="edit-name" data-command="rename" title="Đổi tên" aria-label="Đổi tên">✎</button></div><div class="job-subtitle">${escapeHTML(p.job)}</div></div>
+      <div class="age-block"><div class="age-number">${p.age}</div><div class="age-label">Tuổi</div></div>
+    </div>
+    <div class="money-box">
+      <div class="money-row"><span class="label"><span class="green">▣</span> Tiền mặt:</span><strong class="green">${fmt(p.cash)}</strong></div>
+      <div class="money-row"><span class="label"><span class="blue">↗</span> Đầu tư / Tiết kiệm:</span><strong class="blue">${fmt(p.invested)}</strong></div>
+      <div class="money-row divider"><span class="label"><span class="yellow">◉</span> Lương ròng/Năm:</span><strong class="${p.salary-p.yearlyExpenses<0?'pink':'green'}">${fmt(p.salary-p.yearlyExpenses)}</strong></div>
+    </div>
+    ${bar('Sức khỏe',p.health,'♡','pink')}
+    ${bar('Hạnh phúc',p.happiness,'☻','yellow')}
+    ${bar('Trí tuệ / IQ',p.intellect,'🧠','blue',CONFIG.MAX_IQ,' điểm')}<div class="iq-info">IQ bẩm sinh: <b>${p.birthIQ??p.intellect}</b> · Kỷ lục: <b>${p.peakIQ??p.intellect}</b> / 200</div>
+    ${bar('Kỹ năng làm việc',p.skill,'ϟ','purple')}
+    <div class="tiny-stats"><span class="tiny-stat">🤝 EQ <b>${p.eq}</b></span><span class="tiny-stat">✨ Nhan sắc <b>${p.beauty}</b></span><span class="tiny-stat">🍀 May mắn <b>${p.luck}</b></span><span class="tiny-stat">🏠 Gia cảnh <b>${p.wealth}</b></span></div>
+    <div class="trait-strip">${p.traits.map(t=>`<span class="trait">${escapeHTML(t)}</span>`).join('')}</div>`;
+}
+function renderActions(state){
+  const p=state.player, actions=getActions(p,state.activeTab);
+  $('actions-panel').innerHTML=`
+    <div class="tab-bar" role="tablist" aria-label="Các nhóm hành động">${CONFIG.categories.map(t=>`<button class="tab ${state.activeTab===t.id?'active':''}" type="button" role="tab" aria-selected="${state.activeTab===t.id}" data-tab="${t.id}"><span class="tab-icon">${t.icon}</span>${t.label}</button>`).join('')}</div>
+    <div class="tab-progress"><div class="tab-progress-inner" style="width:${p.actionsLeft/CONFIG.ACTIONS_PER_YEAR*100}%"></div></div>
+    <div class="action-heading"><span>${p.alive?'Mỗi năm mày có 2 lượt để tự quyết cuộc đời.':'Cuộc đời đã khép lại.'}</span><b>${p.alive?`⚡ ${p.actionsLeft}/${CONFIG.ACTIONS_PER_YEAR} lượt`:'🪦 GAME OVER'}</b></div>
+    <div class="action-grid">${actions.map(a=>{
+      const used=Boolean(p.actionUses[a.id]);const locked= !p.alive||!!p.pendingEvent||p.actionsLeft<=0||used||p.age<a.minAge||Boolean(a.disabledWhen?.(p))||p.cash<a.cost;
+      const label=used?'Đã thực hiện năm nay':p.cash<a.cost?'Không đủ tiền':p.actionsLeft<=0?'Hết lượt':a.button;
+      return `<article class="action-card"><h3><span class="action-icon">${a.icon}</span>${escapeHTML(a.title)}</h3><p>${escapeHTML(a.description)}</p><button type="button" class="action-button ${a.featured?'featured':''} ${locked?'locked':''}" data-action="${a.id}" ${locked?'disabled':''}>${escapeHTML(label)}</button></article>`;
+    }).join('')}</div>`;
+}
+function renderProperty(p,autoPlay=false){
+  const canAdvance=p.alive&&!p.pendingEvent;
+  const autoLabel=autoPlay?'⏸ DỪNG TỰ ĐỘNG':'▶ TỰ ĐỘNG (5s/NĂM)';
+  const autoButton=`<button class="auto-year ${autoPlay?'running':''}" type="button" data-command="auto-year" aria-pressed="${autoPlay}" ${p.alive?'':'disabled'}>${autoLabel}</button>`;
+  const manualButton=`<button class="next-year" type="button" data-command="year" ${canAdvance?'':'disabled'}>⏩ +1 TUỔI</button>`;
+  const body=`<h2 class="section-title"><span class="symbol">⌂</span> Tài sản & Gia đình</h2><dl class="property-list">
+    <div class="property-row"><dt>Hôn nhân:</dt><dd>${escapeHTML(p.marriage)}</dd></div>
+    <div class="property-row"><dt>Nhà cửa:</dt><dd>${escapeHTML(p.house)}</dd></div>
+    <div class="property-row"><dt>Phương tiện:</dt><dd>${escapeHTML(p.vehicle)}</dd></div>
+    <div class="property-row"><dt>Con cái:</dt><dd>${p.children}</dd></div></dl>
+    <div class="year-controls">${manualButton}${autoButton}</div>
+    <p class="year-note">${!p.alive?'Một kiếp đã kết thúc — đầu thai lại để thử vận.':autoPlay?'⏱ Đang chạy: 5 giây / 1 năm · Biến cố được chọn ngẫu nhiên.':'Chế độ tự động sẽ tự chọn biến cố và qua năm sau mỗi 5 giây.'}</p>`;
+  $('property-panel').innerHTML=body;
+  $('mobile-dock').innerHTML=`${manualButton}${autoButton}`;
+}
+
+function renderJournal(p){
+  $('journal-panel').innerHTML=`<div class="journal-top"><h2 class="section-title"><span class="symbol" style="color:#8b91ff">◴</span> Nhật Ký Cuộc Đời (Lịch sử sự kiện)</h2><span class="journal-count">${p.history.length} sự kiện · ${p.yearlyAmbient??0}/2 biến cố phụ năm nay</span></div>
+    <div id="journal-feed" class="journal-feed" aria-live="polite">${p.history.map(e=>`<div class="journal-entry"><span class="year-tag">[Năm ${e.age} tuổi]</span><span class="event-text type-${e.type}">${escapeHTML(e.text)}</span></div>`).join('')}</div><p class="journal-hint">Mỗi năm có 2 biến cố tự xảy ra, ngoài biến cố có lựa chọn. Cuộn lên để xem lại.</p>`;
+  const feed=$('journal-feed');feed.scrollTop=feed.scrollHeight;
+}
+const rankNames={rich:'💰 Top Giàu Nhất',old:'🦕 Top Tuổi Cao',absurd:'🧂 Top Trái Ngang',iq:'🧠 Top IQ'};
+function rankingHTML(view){
+  const boards=loadBoards(),items=boards[view.rankTab]||[];
+  const national=isOnlineBoard();
+  return `<div class="modal-topline"><div class="modal-kicker">${national?'🌏 XẾP HẠNG TOÀN QUỐC':'🏠 XẾP HẠNG CỤC BỘ'}</div><button class="close-button" aria-label="Đóng" data-command="close">×</button></div><h2>🏆 Bảng Xếp Hạng</h2><p>${national?'Top 100 toàn quốc. Điểm do server tính, chỉ ghi khi nhân vật chết.':'Bản offline: bảng này chỉ lưu trên máy, KHÔNG phải Top toàn quốc.'}</p>
+    <div class="ranking-tabs">${Object.entries(rankNames).map(([id,label])=>`<button class="ranking-tab ${view.rankTab===id?'active':''}" data-rank="${id}">${label}</button>`).join('')}</div>
+    ${items.length?items.map((r,i)=>`<div class="rank-item"><div class="rank-no">#${r.rank??i+1}</div><div class="rank-info"><strong>${escapeHTML(r.name)}</strong>${r.nickname?`<small>👤 ${escapeHTML(r.nickname)}</small>`:''}<small>${view.rankTab==='iq'?escapeHTML(`IQ bẩm sinh: ${r.birthIQ??'—'} · ${r.age} tuổi`):`${r.age} tuổi · ${escapeHTML(r.reason||'Kết thúc kiếp người')}`} </small></div><div class="rank-score">${view.rankTab==='rich'?formatMoney(r.cash)+' ₫':view.rankTab==='old'?r.age+' tuổi':view.rankTab==='absurd'?r.absurdity+' điểm':(r.iq??'—')+' IQ'}</div></div>`).join(''):'<div class="empty-state">🕯️ Chưa ai có tên trên bảng này.<br/>Chơi một kiếp đến lúc qua đời để ghi danh!</div>'}`;
+}
+function archiveListHTML(){
+  const lives=listArchivedLives();
+  return `<div class="modal-topline"><div class="modal-kicker">📜 HỒI KÝ ĐA KIẾP</div><button class="close-button" data-command="close" aria-label="Đóng">×</button></div>
+    <h2>📜 Lịch sử kiếp trước</h2><p>Chết rồi vẫn còn chuyện để kể. Mỗi kiếp đã qua lưu độc lập với bảng xếp hạng, mở ra đọc lại bất cứ lúc nào.</p>
+    <div class="archive-summary">🪦 Đã tìm thấy <b>${lives.length}</b> kiếp đã kết thúc ${isOnlineBoard()?'trong hồ sơ khách':'trên trình duyệt này'}.</div>
+    ${lives.length?`<div class="archive-list">${lives.map(l=>`<button class="archive-life-card" data-life-id="${escapeHTML(l.id)}" type="button">
+      <span class="archive-life-icon">${l.legacy?'📄':'🪦'}</span><span class="archive-life-main"><strong>${l.lifeNumber!=null?`Kiếp #${String(l.lifeNumber).padStart(3,'0')} · `:''}${escapeHTML(l.name)}</strong>
+      <small>${Number(l.age)||0} tuổi · 🧠 ${Number(l.iq)||0} IQ · 💰 ${formatMoney(Number(l.cash)||0)} ₫</small>
+      <small>${escapeHTML(l.reason||'Chưa rõ nguyên nhân chết')}</small></span>
+      <span class="archive-life-tail">${l.legacy?'Tóm tắt cũ':`${l.historyCount||0} sự kiện`} ❯</span>
+    </button>`).join('')}</div>`:'<div class="empty-state">Chưa có kiếp nào chết để lưu. Khi kiếp này kết thúc, toàn bộ nhật ký sẽ xuất hiện ở đây.</div>'}
+    <p class="archive-footnote">${isOnlineBoard()?'Kiếp online đã được lưu trên server và gắn với phiên khách của mày. Giữ cookie để mở lại.':'Kiếp offline chỉ nằm trên trình duyệt. Đừng xóa dữ liệu trang web.'}</p>`;
+}
+function archiveDetailHTML(id){
+  const life=getArchivedLife(id);
+  if(!life)return `<div class="modal-topline"><div class="modal-kicker">KIẾP KHÔNG TÌM THẤY</div><button class="close-button" data-command="archive" aria-label="Quay lại">×</button></div><p>Không tìm thấy nhật ký này trong bộ nhớ trình duyệt.</p>`;
+  const history=life.history||[];
+  let lastAge=null;
+  const timeline=history.map(entry=>{
+    const age=Number(entry.age)||0;
+    const heading=age!==lastAge?`<div class="archive-age-heading" id="archive-age-${age}">✦ Năm ${age} tuổi</div>`:'';
+    lastAge=age;
+    return `${heading}<div class="archive-event"><span class="archive-event-type">${entry.type==='death'?'🪦':entry.type==='bad'?'💥':entry.type==='good'?'✨':'📌'}</span><span>${escapeHTML(entry.text)}</span></div>`;
+  }).join('');
+  const ages=[...new Set(history.map(e=>Number(e.age)||0))];
+  return `<div class="modal-topline"><button class="archive-back" data-command="archive" type="button">← Tất cả kiếp</button><button class="close-button" data-command="close" aria-label="Đóng">×</button></div>
+    <div class="modal-kicker">${life.lifeNumber!=null?`KIẾP #${String(life.lifeNumber).padStart(3,'0')}`:'HỒ SƠ KIẾP CŨ'}</div>
+    <h2>🪦 ${escapeHTML(life.name||'Vô danh')}</h2>
+    <div class="archive-metrics"><div><span>Tuổi thọ</span><strong>${Number(life.age)||0} tuổi</strong></div><div><span>Đỉnh IQ</span><strong>${Number(life.peakIQ??life.iq)||0}</strong></div><div><span>Tài sản</span><strong>${formatMoney(Number(life.cash)||0)} ₫</strong></div></div>
+    <div class="archive-death"><strong>☠️ Nguyên nhân chết</strong><span>${escapeHTML(life.reason||'Không rõ')}</span></div>
+    ${life.legacy?'<div class="archive-warning">⚠️ Đây là thành tích từ phiên bản cũ. Trước bản cập nhật này game chưa lưu riêng nhật ký sau khi đầu thai, nên chỉ lấy lại được thông tin còn trong bảng xếp hạng.</div>':`<div class="archive-more">💼 ${escapeHTML(life.job||'Không rõ')} · 🧠 IQ gốc ${Number(life.birthIQ)||0} · ❤️ Sức khỏe ${Number(life.health)||0} · 🤝 EQ ${Number(life.eq)||0}<div>🏡 ${escapeHTML(life.house||'Không rõ')} · 💍 ${escapeHTML(life.marriage||'Không rõ')} · 👶 ${Number(life.children)||0} con</div></div>`}
+    <div class="archive-timeline-header"><h3>📖 Toàn bộ nhật ký (${history.length} sự kiện)</h3>
+    ${ages.length>0?`<label class="archive-jump-label">Tới tuổi <select id="archive-age-select" aria-label="Chuyển đến tuổi">${ages.map(age=>`<option value="${age}">${age}</option>`).join('')}</select></label>`:''}</div>
+    <div class="archive-timeline" id="archive-timeline">${timeline||'<div class="empty-state">Không có sự kiện nào được lưu cho kiếp này.</div>'}</div>
+    ${!life.legacy?`<button class="full-button" data-command="export-life" data-life-id="${escapeHTML(life.id)}">⬇️ Tải nhật ký kiếp này (.txt)</button>`:''}`;
+}
+function renderOverlay(p,view){
+  let html='';
+  const modal=view.modal;
+  if(modal==='archive')html=archiveListHTML();
+  else if(modal==='archive-detail')html=archiveDetailHTML(view.archiveId);
+  else if(p.pendingEvent&&p.alive){
+    const e=p.pendingEvent;
+    html=`<div class="modal-kicker">🎲 BIẾN CỐ NĂM ${p.age} TUỔI</div><h2>${escapeHTML(e.title)}</h2><p>${escapeHTML(e.description)}</p><div class="choice-stack">${e.choices.map((c,i)=>`<button type="button" class="choice-button" data-choice="${i}">${escapeHTML(c.label)}<span>${escapeHTML(c.hint||'Lựa chọn của mày sẽ tạo hậu quả.')}</span></button>`).join('')}</div>`;
+  }else if(modal==='ranking')html=rankingHTML(view);
+  else if(modal==='nickname')html=`<div class="modal-topline"><div class="modal-kicker">TÀI KHOẢN KHÁCH</div><button class="close-button" data-command="close" aria-label="Đóng">×</button></div><h2>👤 Biệt danh trên Top toàn quốc</h2><p>Không cần email hay mật khẩu. Biệt danh này được gắn với các thành tích khi mày chết. Đổi máy hoặc xóa cookie có thể mất quyền quản lý hồ sơ khách.</p><form id="nickname-form"><label for="new-nickname">Biệt danh (2–24 ký tự)</label><input id="new-nickname" class="name-input" maxlength="24" minlength="2" required value="${escapeHTML(view.nickname||'Khách')}"/><button type="submit" class="full-button">Lưu biệt danh</button></form>`;
+  else if(modal==='rename')html=`<div class="modal-topline"><div class="modal-kicker">ĐỔI TÊN NHÂN VẬT</div><button class="close-button" data-command="close" aria-label="Đóng">×</button></div><h2>Mày muốn được gọi là gì?</h2><p>Đổi tên thoải mái. Còn nhà giàu hay nghèo thì số phận chọn.</p><form id="name-form"><label for="new-name" style="display:block;margin-bottom:8px;font-size:12px;color:#b9c8da">Tên nhân vật</label><input id="new-name" class="name-input" maxlength="30" value="${escapeHTML(p.name)}" required minlength="2" autofocus /><button type="submit" class="full-button">Lưu tên mới</button></form>`;
+  else if(!p.alive)html=`<div class="modal-kicker">🪦 KIẾP #${String(p.lifeNumber).padStart(3,'0')} ĐÃ KHÉP LẠI</div><h2>GAME OVER — Hết một đời!</h2><p>${escapeHTML(p.deathReason)} Mày đã được ghi tên vào các bảng xếp hạng. Không hồi sinh, không quảng cáo cứu mạng.</p>
+    <div class="rank-item"><div class="rank-info"><strong>${escapeHTML(p.name)}</strong><small>${p.job} · ${p.age} năm trên cõi đời</small></div><div class="rank-score">${formatMoney(p.cash+p.invested)} ₫<br/>🧂 ${p.absurdity} điểm<br/>🧠 ${p.peakIQ??p.intellect} IQ</div></div>
+    ${view.online&&view.ranks?`<div class="rank-item"><div class="rank-info"><strong>🌏 THỨ HẠNG TOÀN QUỐC</strong><small>💰 Giàu #${view.ranks.rich} · 🧠 IQ #${view.ranks.iq} · 🦕 Tuổi #${view.ranks.old} · 🧂 Trái ngang #${view.ranks.absurd}</small></div></div>`:''}
+    <button class="full-button" data-command="archive-detail" data-life-id="${escapeHTML(p.id)}">📜 ĐỌC LẠI TOÀN BỘ KIẾP NÀY</button><button class="full-button sub-button" data-command="rebirth">👶 ĐẦU THAI KIẾP MỚI (RANDOM 100%)</button><button class="full-button sub-button" data-command="ranking">🏆 Xem bảng xếp hạng</button>`;
+  if(html){$('overlay-root').innerHTML=`<div class="modal-shade"><div class="modal ${modal==='archive'||modal==='archive-detail'?'archive-modal':''}" role="dialog" aria-modal="true">${html}</div></div>`;}
+  else $('overlay-root').innerHTML='';
+}
+function render(state,view){
+  renderStats(state.player);renderActions(state);renderProperty(state.player,view.autoPlay);renderJournal(state.player);
+  $('life-count').textContent=`KIẾP #${String(state.player.lifeNumber).padStart(3,'0')}`;
+  const status=$('online-status'), guest=$('guest-name');
+  if(status){status.textContent=view.online?'🌏 Top toàn quốc':'🏠 Chơi offline';status.classList?.toggle('connected',!!view.online);}
+  if(guest)guest.textContent=view.online?(view.nickname||'Khách'):'Cục bộ';
+  renderOverlay(state.player,view);
+}
+function toast(message){
+  const target=$('toast-root');target.innerHTML=`<div class="toast">${escapeHTML(message)}</div>`;
+  clearTimeout(toast.timer);toast.timer=setTimeout(()=>{target.innerHTML=''},2500);
+}
+
+
+// ===== main.js =====
+
+
+
+
+const ONLINE=typeof location!=='undefined' && /^https?:$/.test(location.protocol);
+let state=ONLINE?null:loadGame();
+let view={modal:null,rankTab:'rich',archiveId:null,online:false,nickname:'',ranks:null};
+let runId=null,revision=0,busy=false,autoTimer=null,autoRunning=false;
+const AUTO_YEAR_INTERVAL_MS=5000;
+
+function paint(){if(state)render(state,{...view,autoPlay:autoRunning});}
+function stopAutoYear(){if(autoTimer!==null){clearInterval(autoTimer);autoTimer=null;}autoRunning=false;}
+function showOfflineError(message){
+  document.getElementById('app').innerHTML=`<div id="loading-game"><h1>⚠️ Chưa kết nối được ĐỜI NÀY Online</h1><p>${message.replace(/[<>&]/g,'')}</p><p>Top toàn quốc cần deploy Netlify Functions và cấu hình Supabase. Không tự chuyển sang Top giả trên máy.</p><button type="button" onclick="location.reload()">🔄 Thử kết nối lại</button><p>Nếu chỉ muốn thử máy, mở file <strong>play.html</strong> tải từ bản ZIP.</p></div>`;
+}
+async function apiPost(command,extra={}){
+  const res=await fetch('/api/game',{method:'POST',credentials:'same-origin',cache:'no-store',
+    headers:{'Content-Type':'application/json'},body:JSON.stringify({command,runId,revision,...extra})});
+  const data=await res.json().catch(()=>({}));
+  if(!res.ok||!data.ok)throw Object.assign(new Error(data.message||'Không kết nối được máy chủ'),{status:res.status});
+  return data;
+}
+async function apiGet(query=''){
+  const res=await fetch('/api/game'+query,{credentials:'same-origin',cache:'no-store'});
+  const data=await res.json().catch(()=>({}));
+  if(!res.ok||!data.ok)throw Object.assign(new Error(data.message||'Máy chủ tạm thời không phản hồi'),{status:res.status});
+  return data;
+}
+function acceptServer(data){
+  if(data.state){
+    state=data.state;runId=data.runId;revision=data.revision;
+    if(!state.player.alive)archiveLife(state.player);
+  }
+  if(data.nickname!==undefined)view.nickname=data.nickname;
+  if(data.boards)setOnlineBoards(data.boards);
+  if(data.ranks!==undefined)view.ranks=data.ranks;
+  view.online=true;
+}
+async function bootstrap(){
+  const root=document.getElementById('actions-panel');
+  if(root)root.innerHTML='<div id="loading-game">🌏 Đang kết nối <strong>Top toàn quốc</strong> và xác minh kiếp hiện tại…</div>';
+  try{const data=await apiGet('?view=bootstrap');acceptServer(data);paint();}
+  catch(error){showOfflineError(error.message);}
+}
+async function refreshBoards(){
+  if(!ONLINE)return;
+  const data=await apiGet('?view=boards');setOnlineBoards(data.boards);paint();
+}
+async function fetchArchiveList(){
+  if(!ONLINE)return;
+  const data=await apiGet('?view=archives');setServerArchives(data.lives);paint();
+}
+async function fetchArchiveDetail(id){
+  if(!ONLINE||getArchivedLife(id)?.history?.length)return;
+  const data=await apiGet('?view=archives&id='+encodeURIComponent(id));
+  if(data.life)setServerLife(data.life);
+}
+async function command(cmd,extra={}){
+  if(busy)return {ok:false};
+  busy=true;
+  try{
+    if(ONLINE){
+      const data=await apiPost(cmd,extra);acceptServer(data);
+    }else{
+      let result={ok:false,message:'Hành động không hợp lệ'};
+      if(cmd==='year')result=advanceYear(state);
+      if(cmd==='action')result=performAction(state,extra.actionId);
+      if(cmd==='choice')result=chooseEvent(state,extra.index);
+      if(cmd==='rename')result=setName(state,extra.value);
+      if(cmd==='rebirth'){state=newGame();result={ok:true};}
+      if(cmd==='tab'){state.activeTab=extra.category;saveGame(state);result={ok:true};}
+      if(cmd==='nickname')result={ok:false,message:'Chỉ đổi biệt danh khi chơi online.'};
+      if(!result.ok)throw new Error(result.message||'Không thể thực hiện thao tác.');
+    }
+    if(!state.player.alive)stopAutoYear();
+    paint();return {ok:true};
+  }catch(error){
+    toast(error.message);
+    if(ONLINE&&error.status===409){stopAutoYear();try{acceptServer(await apiGet('?view=bootstrap'));paint();}catch{}}
+    return {ok:false};
+  }finally{busy=false;}
+}
+async function resolveAutoEvent(){
+  const choices=state.player.pendingEvent?.choices;
+  if(choices?.length)await command('choice',{index:Math.floor(Math.random()*choices.length)});
+}
+async function autoNextYear(){
+  if(!autoRunning||busy||!state)return;
+  if(state.player.pendingEvent)await resolveAutoEvent();
+  if(!state.player.alive||!autoRunning)return;
+  const result=await command('year');
+  if(!result.ok){stopAutoYear();paint();return;}
+  if(state.player.pendingEvent)await resolveAutoEvent();
+  if(!state.player.alive)stopAutoYear();
+  view.modal=null;paint();
+}
+async function startAutoYear(){
+  if(!state.player.alive){toast('Kiếp này đã kết thúc!');return;}
+  if(state.player.pendingEvent)await resolveAutoEvent();
+  if(!state.player.alive)return;
+  autoRunning=true;autoTimer=setInterval(autoNextYear,AUTO_YEAR_INTERVAL_MS);
+  view.modal=null;paint();toast('▶ Tự chạy: 5 giây / 1 tuổi, biến cố được tự chọn.');
+}
+function downloadLife(id){
+  const life=getArchivedLife(id);
+  if(!life||life.legacy){toast('Không tìm được nhật ký đầy đủ của kiếp này.');return;}
+  const lines=[`ĐỜI NÀY — HỒI KÝ KIẾP #${life.lifeNumber??'?'}`,
+    `Nhân vật: ${life.name} | Sống: ${life.age} tuổi | Nghề: ${life.job}`,
+    `IQ bẩm sinh: ${life.birthIQ} | IQ cao nhất: ${life.peakIQ}`,
+    `Tài sản: ${life.cash} VND | Lý do chết: ${life.reason}`,'',
+    '=== NHẬT KÝ CUỘC ĐỜI ===',...(life.history||[]).map(e=>`[Năm ${e.age} tuổi] ${e.text}`)];
+  const blob=new Blob(['\uFEFF'+lines.join('\n')],{type:'text/plain;charset=utf-8'});
+  const url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download=`doi-nay-kiep-${life.lifeNumber??'cu'}-${String(life.id).replace(/[^\w-]/g,'')}.txt`;
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+if(ONLINE)bootstrap();else paint();
+
+document.addEventListener('click',async event=>{
+  if(!state||busy)return;
+  const lifeCard=event.target.closest('.archive-life-card');
+  if(lifeCard){
+    stopAutoYear();view.archiveId=lifeCard.dataset.lifeId;
+    try{await fetchArchiveDetail(view.archiveId);}catch(error){toast(error.message);}
+    view.modal='archive-detail';paint();return;
+  }
+  const choice=event.target.closest('[data-choice]');
+  if(choice){const result=await command('choice',{index:Number(choice.dataset.choice)});if(result.ok)view.modal=null;paint();return;}
+  const tab=event.target.closest('[data-tab]');
+  if(tab){if(state.player.pendingEvent)return;
+    // Switching tabs is only a presentation concern; action POST still specifies its category.
+    state.activeTab=tab.dataset.tab; if(!ONLINE)saveGame(state);paint();return;}
+  const action=event.target.closest('[data-action]');
+  if(action){await command('action',{actionId:action.dataset.action,category:state.activeTab});return;}
+  const rank=event.target.closest('[data-rank]');
+  if(rank){view.rankTab=rank.dataset.rank;paint();return;}
+  const ctl=event.target.closest('[data-command]');
+  const id=ctl?.dataset.command||(event.target.closest('#btn-ranking')?'ranking':null);
+  if(!id)return;
+  if(id==='auto-year'){
+    if(autoRunning){stopAutoYear();paint();toast('⏸ Đã dừng tự động.');}
+    else await startAutoYear();return;
+  }
+  if(id==='year'){stopAutoYear();const result=await command('year');if(result.ok)view.modal=null;paint();return;}
+  if(id==='archive'){
+    stopAutoYear();view.modal='archive';paint();
+    try{await fetchArchiveList();}catch(error){toast(error.message);}return;
+  }
+  if(id==='archive-detail'){
+    stopAutoYear();view.archiveId=ctl.dataset.lifeId;
+    try{await fetchArchiveDetail(view.archiveId);}catch(error){toast(error.message);}
+    view.modal='archive-detail';paint();return;
+  }
+  if(id==='export-life'){downloadLife(ctl.dataset.lifeId);return;}
+  if(id==='rename'||id==='nickname'){
+    stopAutoYear();view.modal=id;paint();document.getElementById(id==='rename'?'new-name':'new-nickname')?.focus();return;
+  }
+  if(id==='ranking'){
+    stopAutoYear();view.modal='ranking';paint();
+    try{await refreshBoards();}catch(error){toast(error.message);}return;
+  }
+  if(id==='close'){view.modal=null;paint();return;}
+  if(id==='rebirth'){
+    stopAutoYear();const result=await command('rebirth');
+    if(result.ok){view.modal=null;view.rankTab='rich';view.archiveId=null;paint();toast('🍼 Kiếp mới bắt đầu. Chúc nhân phẩm khá hơn!');}return;
+  }
+  if(id==='journal'){document.getElementById('journal-panel')?.scrollIntoView({behavior:'smooth',block:'start'});}
+});
+
+document.addEventListener('submit',async event=>{
+  if(!['name-form','nickname-form'].includes(event.target.id))return;
+  event.preventDefault();
+  const nick=event.target.id==='nickname-form';
+  const val=document.getElementById(nick?'new-nickname':'new-name')?.value;
+  const result=await command(nick?'nickname':'rename',{value:val});
+  if(result.ok){view.modal=null;paint();toast(nick?'👤 Đã đổi biệt danh khách!':'✏️ Đã đổi tên nhân vật!');}
+});
+document.addEventListener('change',event=>{
+  if(event.target.id==='archive-age-select'){
+    const section=document.getElementById(`archive-age-${Number(event.target.value)}`),timeline=document.getElementById('archive-timeline');
+    if(section&&timeline)timeline.scrollTop=section.offsetTop;
+  }
+});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&view.modal){view.modal=null;paint();}});
+
+</script>
+</body>
+</html>

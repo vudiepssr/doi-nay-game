@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1324" />
+  <meta name="description" content="Đời Này — game mô phỏng cuộc đời, đầu thai ngẫu nhiên và sống với lựa chọn của mình." />
+  <title>ĐỜI NÀY — Game mô phỏng cuộc đời</title>
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div class="brand"><span class="brand-icon">✦</span><span>ĐỜI <strong>NÀY</strong></span><span class="brand-label">LIFE SIMULATOR</span></div>
+      <div class="top-actions"><span id="online-status" class="online-pill" title="Trạng thái server">Đang kết nối…</span><button id="btn-nickname" class="ghost-button guest-button" type="button" data-command="nickname">👤 <span id="guest-name">Khách</span></button><span id="life-count" class="life-chip">KIẾP #001</span><button id="btn-archive" class="ghost-button" type="button" data-command="archive">📜 <span>Kiếp trước</span></button><button id="btn-ranking" class="ghost-button" type="button">🏆 <span>Bảng xếp hạng</span></button></div>
+    </header>
+    <main class="layout">
+      <section id="player-panel" class="panel stats-panel" aria-label="Nhân vật"></section>
+      <section id="actions-panel" class="panel actions-panel" aria-label="Lựa chọn cuộc đời"></section>
+      <section id="property-panel" class="panel property-panel" aria-label="Tài sản và gia đình"></section>
+      <section id="journal-panel" class="panel journal-panel" aria-label="Nhật ký cuộc đời"></section>
+    </main>
+    <footer class="mobile-dock" id="mobile-dock"></footer>
+  </div>
+  <div id="overlay-root"></div>
+  <div id="toast-root" role="status" aria-live="polite"></div>
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>
