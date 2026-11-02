@@ -5,7 +5,7 @@ import {archiveLife,getArchivedLife,setServerArchives,setServerLife} from './lif
 
 const ONLINE=typeof location!=='undefined' && /^https?:$/.test(location.protocol);
 let state=ONLINE?null:loadGame();
-let view={modal:null,rankTab:'rich',archiveId:null,online:false,nickname:'',ranks:null};
+let view={modal:null,rankTab:'rich',archiveId:null,online:false,nickname:'',ranks:null,feedFilter:'all',dossierExpanded:false};
 let runId=null,revision=0,busy=false,autoTimer=null,autoRunning=false;
 const AUTO_YEAR_INTERVAL_MS=5000;
 
@@ -124,6 +124,8 @@ document.addEventListener('click',async event=>{
   }
   const choice=event.target.closest('[data-choice]');
   if(choice){const result=await command('choice',{index:Number(choice.dataset.choice)});if(result.ok)view.modal=null;paint();return;}
+  const feedFilter=event.target.closest('[data-feed-filter]');
+  if(feedFilter){view.feedFilter=feedFilter.dataset.feedFilter;paint();return;}
   const tab=event.target.closest('[data-tab]');
   if(tab){if(state.player.pendingEvent)return;
     // Switching tabs is only a presentation concern; action POST still specifies its category.
@@ -135,6 +137,7 @@ document.addEventListener('click',async event=>{
   const ctl=event.target.closest('[data-command]');
   const id=ctl?.dataset.command||(event.target.closest('#btn-ranking')?'ranking':null);
   if(!id)return;
+  if(id==='toggle-dossier'){view.dossierExpanded=!view.dossierExpanded;paint();return;}
   if(id==='auto-year'){
     if(autoRunning){stopAutoYear();paint();toast('⏸ Đã dừng tự động.');}
     else await startAutoYear();return;
@@ -150,6 +153,16 @@ document.addEventListener('click',async event=>{
     view.modal='archive-detail';paint();return;
   }
   if(id==='export-life'){downloadLife(ctl.dataset.lifeId);return;}
+  if(id==='share-life'){
+    const p=state.player;
+    const shareText=`ĐỜI NÀY — KIẾP #${p.lifeNumber}\n${p.name} hưởng dương ${p.age} tuổi.\nIQ cao nhất: ${p.peakIQ??p.intellect}/200 · Trái ngang: ${p.absurdity} điểm.\nTài sản cuối đời: ${Math.round(p.cash+p.invested).toLocaleString('vi-VN')} ₫.\nNguyên nhân: ${p.deathReason}${ONLINE?'\nChơi thử: '+location.origin:''}`;
+    try{
+      if(navigator.share){await navigator.share({title:'ĐỜI NÀY — Kiếp #'+p.lifeNumber,text:shareText});}
+      else if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(shareText);toast('📋 Đã sao chép thành tích để khoe!');}
+      else{window.prompt('Sao chép thành tích kiếp này:',shareText);}
+    }catch(err){if(err?.name!=='AbortError')toast('Không thể chia sẻ trên trình duyệt này.');}
+    return;
+  }
   if(id==='rename'||id==='nickname'){
     stopAutoYear();view.modal=id;paint();document.getElementById(id==='rename'?'new-name':'new-nickname')?.focus();return;
   }

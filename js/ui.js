@@ -3,133 +3,132 @@ import {getAvatar} from './avatar.js';
 import {getActions} from './actions.js';
 import {loadBoards,isOnlineBoard} from './leaderboard.js';
 import {listArchivedLives,getArchivedLife} from './lifeArchive.js';
-const $=id=>document.getElementById(id);
-const fmt=v=>formatMoney(v)+' VND';
-function bar(name,value,icon,cls,max=100,unit='%'){
-  return `<div class="stat"><div class="stat-line"><span class="left">${icon} ${name}</span><span class="val ${cls}">${Math.round(value)}${unit}</span></div><div class="bar"><div class="bar-fill fill-${cls==='pink'?'health':cls==='yellow'?'happiness':cls==='blue'?'intellect':'skill'}" style="width:${Math.max(0,Math.min(100,value/max*100))}%"></div></div></div>`;
+const $ = id => document.getElementById(id);
+const safe = v => escapeHTML(v ?? '');
+const money = v => formatMoney(Number(v)||0)+' ₫';
+const whole = v => Math.round(Number(v)||0);
+const safePct = (v,max=100) => Math.max(0,Math.min(100,(Number(v)||0)/max*100));
+const strength = (v,low='BÁO ĐỘNG',mid='CHƯA ỔN',high='TẠM ỔN',great='NGON LÀNH') => v < 25 ? low : v < 50 ? mid : v < 80 ? high : great;
+const docLabels = {study:{icon:'🎓',name:'ĐƯỜNG HỌC HÀNH',file:'HỌC BẠ / PHIẾU ĐIỂM',subtitle:'Học giỏi hay không thì tùy não. Học phí không tùy ai.'},work:{icon:'💼',name:'CẦN CÂU CƠM',file:'ĐƠN XIN VIỆC',subtitle:'Chỗ ký tên còn trống. Lương cao hay thấp, trời biết.'},life:{icon:'☕',name:'ĂN CHƠI & GIA ĐẠO',file:'SỔ GHI CHÉP ĐỜI SỐNG',subtitle:'Yêu đương, bạn bè, sức khỏe và những lần tiêu tiền ngu.'},finance:{icon:'💸',name:'TIỀN NONG & MÁU LIỀU',file:'SỔ THU CHI / GIẤY BÁO NỢ',subtitle:'Tiền không tự đẻ ra. Nhưng nợ có thể tự mọc.'}};
+function stamp(text,modifier=''){return `<span class="red-stamp ${modifier}">${safe(text)}</span>`;}
+function statNote(key,v){
+  if(key==='intellect')return v>=150?'HÀNG HIẾM':v>100?'NÃO SÁNG':v<30?'CẦN ĐI HỌC':'ĐỦ SỐNG';
+  if(key==='eq')return strength(v,'KHÓ Ở','HƠI CỘC','BIẾT ĐIỀU','KHÉO MIỆNG');
+  if(key==='health')return strength(v,'CẦN CỨU','YẾU NHƯ SÊN','TẠM ỔN','TRÂU BÒ');
+  return strength(v,'ĐỜI QUÁ ĐEN','HƠI CHÁN','CÒN VUI','PHƠI PHỚI');
 }
-function renderStats(p){
+function statPaper(label,key,value,max=100){
+  const v=whole(value), status=statNote(key,v);
+  return `<div class="paper-stat paper-stat-${key}"><div class="paper-stat-head"><span>${safe(label)}</span><strong>${v}${key==='intellect'?'<small> / 200</small>':'<small> / 100</small>'}</strong></div><div class="ruler" aria-hidden="true"><span style="width:${safePct(v,max)}%"></span></div><span class="stat-handnote">${status}</span></div>`;
+}
+function renderStats(p,view){
   $('player-panel').innerHTML=`
-    <div class="identity"><div class="avatar" aria-label="Avatar ${escapeHTML(p.name)}">${getAvatar(p)}</div>
-      <div class="identity-info"><div class="name-line"><h1 title="${escapeHTML(p.name)}">${escapeHTML(p.name)}</h1><button class="edit-name" data-command="rename" title="Đổi tên" aria-label="Đổi tên">✎</button></div><div class="job-subtitle">${escapeHTML(p.job)}</div></div>
-      <div class="age-block"><div class="age-number">${p.age}</div><div class="age-label">Tuổi</div></div>
-    </div>
-    <div class="money-box">
-      <div class="money-row"><span class="label"><span class="green">▣</span> Tiền mặt:</span><strong class="green">${fmt(p.cash)}</strong></div>
-      <div class="money-row"><span class="label"><span class="blue">↗</span> Đầu tư / Tiết kiệm:</span><strong class="blue">${fmt(p.invested)}</strong></div>
-      <div class="money-row divider"><span class="label"><span class="yellow">◉</span> Lương ròng/Năm:</span><strong class="${p.salary-p.yearlyExpenses<0?'pink':'green'}">${fmt(p.salary-p.yearlyExpenses)}</strong></div>
-    </div>
-    ${bar('Sức khỏe',p.health,'♡','pink')}
-    ${bar('Hạnh phúc',p.happiness,'☻','yellow')}
-    ${bar('Trí tuệ / IQ',p.intellect,'🧠','blue',CONFIG.MAX_IQ,' điểm')}<div class="iq-info">IQ bẩm sinh: <b>${p.birthIQ??p.intellect}</b> · Kỷ lục: <b>${p.peakIQ??p.intellect}</b> / 200</div>
-    ${bar('Kỹ năng làm việc',p.skill,'ϟ','purple')}
-    <div class="tiny-stats"><span class="tiny-stat">🤝 EQ <b>${p.eq}</b></span><span class="tiny-stat">✨ Nhan sắc <b>${p.beauty}</b></span><span class="tiny-stat">🍀 May mắn <b>${p.luck}</b></span><span class="tiny-stat">🏠 Gia cảnh <b>${p.wealth}</b></span></div>
-    <div class="trait-strip">${p.traits.map(t=>`<span class="trait">${escapeHTML(t)}</span>`).join('')}</div>`;
-}
-function renderActions(state){
-  const p=state.player, actions=getActions(p,state.activeTab);
-  $('actions-panel').innerHTML=`
-    <div class="tab-bar" role="tablist" aria-label="Các nhóm hành động">${CONFIG.categories.map(t=>`<button class="tab ${state.activeTab===t.id?'active':''}" type="button" role="tab" aria-selected="${state.activeTab===t.id}" data-tab="${t.id}"><span class="tab-icon">${t.icon}</span>${t.label}</button>`).join('')}</div>
-    <div class="tab-progress"><div class="tab-progress-inner" style="width:${p.actionsLeft/CONFIG.ACTIONS_PER_YEAR*100}%"></div></div>
-    <div class="action-heading"><span>${p.alive?'Mỗi năm mày có 2 lượt để tự quyết cuộc đời.':'Cuộc đời đã khép lại.'}</span><b>${p.alive?`⚡ ${p.actionsLeft}/${CONFIG.ACTIONS_PER_YEAR} lượt`:'🪦 GAME OVER'}</b></div>
-    <div class="action-grid">${actions.map(a=>{
-      const used=Boolean(p.actionUses[a.id]);const locked= !p.alive||!!p.pendingEvent||p.actionsLeft<=0||used||p.age<a.minAge||Boolean(a.disabledWhen?.(p))||p.cash<a.cost;
-      const label=used?'Đã thực hiện năm nay':p.cash<a.cost?'Không đủ tiền':p.actionsLeft<=0?'Hết lượt':a.button;
-      return `<article class="action-card"><h3><span class="action-icon">${a.icon}</span>${escapeHTML(a.title)}</h3><p>${escapeHTML(a.description)}</p><button type="button" class="action-button ${a.featured?'featured':''} ${locked?'locked':''}" data-action="${a.id}" ${locked?'disabled':''}>${escapeHTML(label)}</button></article>`;
-    }).join('')}</div>`;
+    <div class="tape tape-left" aria-hidden="true"></div>
+    <div class="dossier-caption"><span>PHÒNG QUẢN LÝ KIẾP SỐ</span><span>SỐ: ${String(whole(p.lifeNumber)).padStart(5,'0')}</span></div>
+    <div class="dossier-heading"><h2>HỒ SƠ <em>KIẾP NÀY</em></h2><span class="dossier-code">MẪU DN-01<br/>KHÔNG ĐƯỢC SỬA GIA CẢNH</span></div>
+    <div class="person-card"><div class="id-photo"><span aria-label="Ảnh nhân vật">${getAvatar(p)}</span><small>ẢNH 3×4</small></div><div class="person-info"><span class="field-name">HỌ VÀ TÊN <button class="pen-button" data-command="rename" aria-label="Đổi tên nhân vật" title="Đổi tên">✎</button></span><h3>${safe(p.name)}</h3><p>${safe(p.job)}</p><span class="person-life">${p.alive?'● CÒN THỞ':'✝ ĐÃ NGỎM'}</span></div><div class="paper-age"><strong>${whole(p.age)}</strong><span>TUỔI</span></div></div>
+    <div class="character-stamp">${stamp(!p.alive?'HẾT KIẾP':p.wealth>=86?'NGẬM THÌA VÀNG':p.intellect>=150?'THẦN ĐỒNG':p.cash<=0?'CHÁY TÚI':'CÒN THỞ','stamp-dossier')}</div>
+    <button class="dossier-toggle" type="button" data-command="toggle-dossier" aria-expanded="${Boolean(view.dossierExpanded)}">${view.dossierExpanded?'− THU GỌN HỒ SƠ':'+ MỞ HỒ SƠ CHI TIẾT'}</button>
+    <div class="dossier-details ${view.dossierExpanded?'is-expanded':''}">
+    <div class="section-rule"><span>01 / TÌNH HÌNH TÚI TIỀN</span></div>
+    <div class="financial-slip"><div><span>TIỀN MẶT</span><strong>${money(p.cash)}</strong></div><div><span>ĐẦU TƯ / GỬI GẮM</span><strong>${money(p.invested)}</strong></div><div class="financial-last"><span>THU NHẬP RÒNG / NĂM</span><strong class="${p.salary-p.yearlyExpenses<0?'negative':'positive'}">${money(p.salary-p.yearlyExpenses)}</strong></div></div>
+    <div class="section-rule"><span>02 / NÃO TRẠNG & NHÂN PHẨM</span></div>
+    <div class="paper-stats">${statPaper('🧠 IQ / ĐỘ KHÔN LỎI','intellect',p.intellect,200)}${statPaper('❤ SỨC KHỎE','health',p.health)}${statPaper('☺ ĐỘ MÃN NGUYỆN','happiness',p.happiness)}${statPaper('🤝 ĐỘ BIẾT ĐIỀU / EQ','eq',p.eq)}</div>
+    <div class="extra-metrics"><span>KỸ NĂNG <b>${whole(p.skill)}</b></span><span>NHAN SẮC <b>${whole(p.beauty)}</b></span><span>MAY MẮN <b>${whole(p.luck)}</b></span><span>GIA CẢNH <b>${whole(p.wealth)}</b></span></div>
+    <div class="ink-annotation">IQ bẩm sinh ${whole(p.birthIQ??p.intellect)} · Đỉnh từng đạt ${whole(p.peakIQ??p.intellect)}/200</div>
+    <div class="trait-paper">${(p.traits||[]).map(t=>`<span>${safe(t)}</span>`).join('')}</div>
+    <div class="file-footer"><span>HỒ SƠ GỐC · BẢN 01</span><span>✳ ĐỜI NÀY ✳</span></div></div>`;
 }
 function renderProperty(p,autoPlay=false){
-  const canAdvance=p.alive&&!p.pendingEvent;
-  const autoLabel=autoPlay?'⏸ DỪNG TỰ ĐỘNG':'▶ TỰ ĐỘNG (5s/NĂM)';
-  const autoButton=`<button class="auto-year ${autoPlay?'running':''}" type="button" data-command="auto-year" aria-pressed="${autoPlay}" ${p.alive?'':'disabled'}>${autoLabel}</button>`;
-  const manualButton=`<button class="next-year" type="button" data-command="year" ${canAdvance?'':'disabled'}>⏩ +1 TUỔI</button>`;
-  const body=`<h2 class="section-title"><span class="symbol">⌂</span> Tài sản & Gia đình</h2><dl class="property-list">
-    <div class="property-row"><dt>Hôn nhân:</dt><dd>${escapeHTML(p.marriage)}</dd></div>
-    <div class="property-row"><dt>Nhà cửa:</dt><dd>${escapeHTML(p.house)}</dd></div>
-    <div class="property-row"><dt>Phương tiện:</dt><dd>${escapeHTML(p.vehicle)}</dd></div>
-    <div class="property-row"><dt>Con cái:</dt><dd>${p.children}</dd></div></dl>
-    <div class="year-controls">${manualButton}${autoButton}</div>
-    <p class="year-note">${!p.alive?'Một kiếp đã kết thúc — đầu thai lại để thử vận.':autoPlay?'⏱ Đang chạy: 5 giây / 1 năm · Biến cố được chọn ngẫu nhiên.':'Tự động: 5 giây/tuổi, không hiện popup; kết quả lưu vào nhật ký.'}</p>`;
-  $('property-panel').innerHTML=body;
-  $('mobile-dock').innerHTML=`${manualButton}${autoButton}`;
+  const manualAllowed=p.alive&&!p.pendingEvent;
+  const manualButton=`<button class="next-year" type="button" data-command="year" ${manualAllowed?'':'disabled'}><span class="control-icon">⏭</span><span>+1 TUỔI<small>QUA NĂM THỦ CÔNG</small></span></button>`;
+  const autoButton=`<button class="auto-year ${autoPlay?'running':''}" type="button" data-command="auto-year" aria-pressed="${Boolean(autoPlay)}" ${p.alive?'':'disabled'}><span class="control-icon">${autoPlay?'Ⅱ':'▶'}</span><span>${autoPlay?'DỪNG TỰ ĐỘNG':'TỰ ĐỘNG SỐNG'}<small>${autoPlay?'ĐANG CHẠY · 5 GIÂY/NĂM':'5 GIÂY / 1 NĂM · KHÔNG POPUP'}</small></span>${autoPlay?'<i class="auto-indicator" aria-hidden="true"></i>':''}</button>`;
+  $('property-panel').innerHTML=`<div class="tape tape-right" aria-hidden="true"></div><div class="document-topline">PHỤ LỤC 02 / ĐỜI SỐNG</div><h2>CỦA NẢ <em>& GIA ĐẠO</em></h2>
+   <dl class="property-list"><div><dt>HÔN NHÂN</dt><dd>${safe(p.marriage)}</dd></div><div><dt>CHỖ CHUI RA CHUI VÀO</dt><dd>${safe(p.house)}</dd></div><div><dt>PHƯƠNG TIỆN</dt><dd>${safe(p.vehicle)}</dd></div><div><dt>CON CÁI</dt><dd>${whole(p.children)} đứa</dd></div></dl>
+   <div class="property-action-title">⏱ QUYỀN ĐIỀU KHIỂN THỜI GIAN</div><div class="year-controls">${manualButton}${autoButton}</div>
+   <p class="year-note">${!p.alive?'Kiếp đã khép lại. Đọc cáo phó rồi đầu thai kiếp mới.':autoPlay?'Tự chạy: server âm thầm bốc sự kiện và ghi vào bảng tin.':'Tự động không hiện hộp lựa chọn; thủ công mới cho mày quyết.'}</p>`;
+  $('mobile-dock').innerHTML=`<div class="dock-label">SỔ ĐỜI · NĂM ${whole(p.age)}</div><div class="dock-buttons">${manualButton}${autoButton}</div>`;
 }
-
-function renderJournal(p){
-  $('journal-panel').innerHTML=`<div class="journal-top"><h2 class="section-title"><span class="symbol" style="color:#8b91ff">◴</span> Nhật Ký Cuộc Đời (Lịch sử sự kiện)</h2><span class="journal-count">${p.history.length} sự kiện · ${p.yearlyAmbient??0}/2 biến cố phụ năm nay</span></div>
-    <div id="journal-feed" class="journal-feed" aria-live="polite">${p.history.map(e=>`<div class="journal-entry"><span class="year-tag">[Năm ${e.age} tuổi]</span><span class="event-text type-${e.type}">${escapeHTML(e.text)}</span></div>`).join('')}</div><p class="journal-hint">Mỗi năm có 2 biến cố tự xảy ra, ngoài biến cố có lựa chọn. Cuộn lên để xem lại.</p>`;
-  const feed=$('journal-feed');feed.scrollTop=feed.scrollHeight;
+function renderActions(state){
+ const p=state.player, actions=getActions(p,state.activeTab);
+ const doc=docLabels[state.activeTab]||docLabels.study;
+ $('actions-panel').innerHTML=`<div class="right-column-heading"><span class="micro-label">PHÒNG GIẢI QUYẾT THỦ TỤC</span><h2>CHỒNG GIẤY <em>CUỘC ĐỜI</em></h2><p>Đơn từ chất đống. Chọn một thứ để làm trong năm.</p></div>
+   <div class="paper-tab-list" role="tablist" aria-label="Các giấy tờ hành động">${CONFIG.categories.map(cat=>`<button type="button" class="paper-tab ${state.activeTab===cat.id?'active':''}" role="tab" aria-selected="${state.activeTab===cat.id}" data-tab="${cat.id}"><span>${docLabels[cat.id].icon}</span>${safe(docLabels[cat.id].name)}</button>`).join('')}</div>
+   <div class="document-sheet doc-${safe(state.activeTab)}"><span class="paperclip" aria-hidden="true">⌁</span><div class="document-topline"><span>${safe(doc.file)}</span><span>MÃ: ${whole(p.lifeNumber)}-${whole(p.age)}</span></div><h3>${safe(doc.name)}</h3><p class="document-desc">${safe(doc.subtitle)}</p>
+   <div class="turn-counter"><span>LƯỢT HÀNH ĐỘNG CÒN LẠI</span><strong>${p.alive?`${whole(p.actionsLeft)} / ${CONFIG.ACTIONS_PER_YEAR}`:'ĐÃ HẾT KIẾP'}</strong></div>
+   <div class="document-action-list">${actions.map((a,i)=>{const used=Boolean(p.actionUses[a.id]);const locked=!p.alive||Boolean(p.pendingEvent)||p.actionsLeft<=0||used||p.age<a.minAge||Boolean(a.disabledWhen?.(p))||p.cash<a.cost;
+     const label=used?'ĐÃ LÀM NĂM NAY':p.cash<a.cost?'KHÔNG ĐỦ TIỀN':p.actionsLeft<=0?'HẾT LƯỢT':!p.alive?'HẾT KIẾP':a.button;
+     return `<article class="document-action ${locked?'is-locked':''}"><div class="action-number">${String(i+1).padStart(2,'0')}</div><div class="action-copy"><h4><span>${a.icon}</span> ${safe(a.title)}</h4><p>${safe(a.description)}</p><button data-action="${safe(a.id)}" type="button" ${locked?'disabled':''}>${safe(label)} <span aria-hidden="true">↗</span></button></div></article>`;}).join('')}</div>
+   <div class="document-bottom"><span>NGƯỜI ĐĂNG KÝ</span><span class="signature">${safe(p.name)}</span></div></div>`;
 }
-const rankNames={rich:'💰 Top Giàu Nhất',old:'🦕 Top Tuổi Cao',absurd:'🧂 Top Trái Ngang',iq:'🧠 Top IQ'};
+function postType(e){if(e.type==='death')return 'death';if(e.type==='bad')return 'bad';if(e.type==='good')return 'good';return 'normal';}
+function postInfo(type){return ({death:{label:'CÁO PHÓ',symbol:'✝',reaction:'HẾT CỨU',mark:'ĐÃ KẾT THÚC'},bad:{label:'DRAMA / XUI XẺO',symbol:'💥',reaction:'CAY THẬT',mark:'ĐỜI VẢ'},good:{label:'TIN VUI / HỜN ĐỜI',symbol:'✨',reaction:'VẬN ĐỎ',mark:'ĐÃ XÁC NHẬN'},normal:{label:'TIN VẶT / SỔ ĐỜI',symbol:'✳',reaction:'ĐÃ HÓNG',mark:'LƯU HỒ SƠ'}})[type];}
+function reactionScore(e,i){let hash=13;const t=String(e.text||'');for(let j=0;j<t.length;j++)hash=(hash*31+t.charCodeAt(j))%1171;return 3+((hash+i*11)%297);}
+function renderJournal(p,view){
+ const filter=view.feedFilter||'all';
+ const all=(p.history||[]).filter(e=>filter==='all'||postType(e)===filter);
+ const groups=new Map();
+ for(const entry of all){const key=whole(entry.age);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(entry);}
+ const ages=[...groups.keys()].sort((a,b)=>b-a);
+ $('journal-panel').innerHTML=`<div class="feed-toolbar"><div><span class="feed-live-dot">●</span><b>BẢNG TIN</b><span class="muted-text">${(p.history||[]).length} tin đã lưu</span></div><span class="feed-year-chip">KIẾP #${String(whole(p.lifeNumber)).padStart(3,'0')}</span></div>
+   <div class="feed-filters" role="group" aria-label="Lọc bảng tin"><button class="feed-filter ${filter==='all'?'active':''}" data-feed-filter="all" aria-pressed="${filter==='all'}">TẤT CẢ</button><button class="feed-filter ${filter==='bad'?'active':''}" data-feed-filter="bad" aria-pressed="${filter==='bad'}">💥 DRAMA</button><button class="feed-filter ${filter==='good'?'active':''}" data-feed-filter="good" aria-pressed="${filter==='good'}">✨ VẬN ĐỎ</button><button class="feed-filter ${filter==='normal'?'active':''}" data-feed-filter="normal" aria-pressed="${filter==='normal'}">📌 ĐỜI THƯỜNG</button></div>
+   ${ages.length?`<div class="feed-timeline">${ages.map((age,yearIndex)=>`<section class="year-group" aria-label="Sự kiện năm ${age} tuổi"><div class="year-divider"><span class="timeline-dot"></span><span class="year-label">NĂM ${age} TUỔI</span><span class="year-event-count">${groups.get(age).length} MẢNH ĐỜI</span></div><div class="post-stack">${groups.get(age).slice().reverse().map((entry,i)=>{
+       const type=postType(entry),meta=postInfo(type);return `<article class="feed-post post-${type}"><div class="post-head"><span class="post-author-avatar">${getAvatar(p)}</span><div class="post-author"><strong>${safe(p.name)}</strong><span>Đã đăng tại kiếp #${whole(p.lifeNumber)} · ${age} tuổi</span></div><span class="post-menu" aria-hidden="true">•••</span></div>
+       <div class="post-body"><div class="post-category">${meta.symbol} ${meta.label}</div><p>${safe(entry.text)}</p>${type==='death'?stamp('HẾT KIẾP','stamp-inline'):''}</div>
+       <div class="post-reactions"><span>😮 ${reactionScore(entry,i+yearIndex)} người hóng*</span><span>↪ ĐÃ GHI VÀO SỔ ĐỜI</span></div></article>`;}).join('')}</div></section>`).join('')}</div><p class="feed-end">✳ HẾT BẢNG TIN · ĐẦU KIẾP Ở ĐÂY ✳</p>`:`<div class="feed-empty">Chưa có tin nào thuộc mục này. Đời còn dài, drama chưa tới thôi.</div>`}
+   <p class="feed-disclaimer">* Phản ứng vui được tạo giả lập, không phải số người xem thật. Mỗi năm tự có 2 biến cố phụ ngoài chuyện chính.</p>`;
+}
+const rankNames={rich:'💰 ĐẠI GIA',old:'🦕 SỐNG DAI',absurd:'🧂 TRÁI NGANG',iq:'🧠 THẦN ĐỒNG'};
 function rankingHTML(view){
-  const boards=loadBoards(),items=boards[view.rankTab]||[];
-  const national=isOnlineBoard();
-  return `<div class="modal-topline"><div class="modal-kicker">${national?'🌏 XẾP HẠNG TOÀN QUỐC':'🏠 XẾP HẠNG CỤC BỘ'}</div><button class="close-button" aria-label="Đóng" data-command="close">×</button></div><h2>🏆 Bảng Xếp Hạng</h2><p>${national?'Top 100 toàn quốc. Điểm do server tính, chỉ ghi khi nhân vật chết.':'Bản offline: bảng này chỉ lưu trên máy, KHÔNG phải Top toàn quốc.'}</p>
-    <div class="ranking-tabs">${Object.entries(rankNames).map(([id,label])=>`<button class="ranking-tab ${view.rankTab===id?'active':''}" data-rank="${id}">${label}</button>`).join('')}</div>
-    ${items.length?items.map((r,i)=>`<div class="rank-item"><div class="rank-no">#${r.rank??i+1}</div><div class="rank-info"><strong>${escapeHTML(r.name)}</strong>${r.nickname?`<small>👤 ${escapeHTML(r.nickname)}</small>`:''}<small>${view.rankTab==='iq'?escapeHTML(`IQ bẩm sinh: ${r.birthIQ??'—'} · ${r.age} tuổi`):`${r.age} tuổi · ${escapeHTML(r.reason||'Kết thúc kiếp người')}`} </small></div><div class="rank-score">${view.rankTab==='rich'?formatMoney(r.cash)+' ₫':view.rankTab==='old'?r.age+' tuổi':view.rankTab==='absurd'?r.absurdity+' điểm':(r.iq??'—')+' IQ'}</div></div>`).join(''):'<div class="empty-state">🕯️ Chưa ai có tên trên bảng này.<br/>Chơi một kiếp đến lúc qua đời để ghi danh!</div>'}`;
+ const boards=loadBoards(),items=boards[view.rankTab]||[],national=isOnlineBoard();
+ return `<div class="modal-topline"><div class="modal-kicker">${national?'🌏 BẢNG VÀNG TOÀN QUỐC':'🏠 BẢNG VÀNG TRÊN MÁY'}</div><button class="close-button" data-command="close" aria-label="Đóng">×</button></div><h2>BẢNG VÀNG NHÂN PHẨM</h2><p>${national?'Top 100 toàn quốc. Server xác minh thành tích khi chết, không mua slot.':'Bản offline chỉ lưu cục bộ. Muốn tranh Top toàn quốc hãy chơi ở web public.'}</p>
+  <div class="ranking-tabs">${Object.entries(rankNames).map(([id,label])=>`<button class="ranking-tab ${view.rankTab===id?'active':''}" data-rank="${id}">${label}</button>`).join('')}</div>
+  <div class="ranking-list">${items.length?items.map((r,i)=>`<div class="rank-item"><div class="rank-no">${i<3?['🥇','🥈','🥉'][i]:'#'+(r.rank??i+1)}</div><div class="rank-info"><strong>${safe(r.name)}</strong>${r.nickname?`<small>CHỦ KIẾP: ${safe(r.nickname)}</small>`:''}<small>${whole(r.age)} tuổi · ${safe(r.reason||'Đã khép kiếp')}</small></div><div class="rank-score">${view.rankTab==='rich'?money(r.cash):view.rankTab==='old'?whole(r.age)+' TUỔI':view.rankTab==='absurd'?whole(r.absurdity)+' ĐIỂM':whole(r.iq)+' IQ'}</div></div>`).join(''):'<div class="empty-state">Chưa có nhân vật nào lên bảng này. Chết rồi mới được ghi danh.</div>'}</div>`;
 }
 function archiveListHTML(){
-  const lives=listArchivedLives();
-  return `<div class="modal-topline"><div class="modal-kicker">📜 HỒI KÝ ĐA KIẾP</div><button class="close-button" data-command="close" aria-label="Đóng">×</button></div>
-    <h2>📜 Lịch sử kiếp trước</h2><p>Chết rồi vẫn còn chuyện để kể. Mỗi kiếp đã qua lưu độc lập với bảng xếp hạng, mở ra đọc lại bất cứ lúc nào.</p>
-    <div class="archive-summary">🪦 Đã tìm thấy <b>${lives.length}</b> kiếp đã kết thúc ${isOnlineBoard()?'trong hồ sơ khách':'trên trình duyệt này'}.</div>
-    ${lives.length?`<div class="archive-list">${lives.map(l=>`<button class="archive-life-card" data-life-id="${escapeHTML(l.id)}" type="button">
-      <span class="archive-life-icon">${l.legacy?'📄':'🪦'}</span><span class="archive-life-main"><strong>${l.lifeNumber!=null?`Kiếp #${String(l.lifeNumber).padStart(3,'0')} · `:''}${escapeHTML(l.name)}</strong>
-      <small>${Number(l.age)||0} tuổi · 🧠 ${Number(l.iq)||0} IQ · 💰 ${formatMoney(Number(l.cash)||0)} ₫</small>
-      <small>${escapeHTML(l.reason||'Chưa rõ nguyên nhân chết')}</small></span>
-      <span class="archive-life-tail">${l.legacy?'Tóm tắt cũ':`${l.historyCount||0} sự kiện`} ❯</span>
-    </button>`).join('')}</div>`:'<div class="empty-state">Chưa có kiếp nào chết để lưu. Khi kiếp này kết thúc, toàn bộ nhật ký sẽ xuất hiện ở đây.</div>'}
-    <p class="archive-footnote">${isOnlineBoard()?'Kiếp online đã được lưu trên server và gắn với phiên khách của mày. Giữ cookie để mở lại.':'Kiếp offline chỉ nằm trên trình duyệt. Đừng xóa dữ liệu trang web.'}</p>`;
+ const lives=listArchivedLives();
+ return `<div class="modal-topline"><div class="modal-kicker">LƯU TRỮ / HỒ SƠ ĐÃ ĐÓNG</div><button class="close-button" data-command="close" aria-label="Đóng">×</button></div><h2>HỒ SƠ KIẾP TRƯỚC</h2><p>Chết rồi vẫn có chuyện để kể. Mở từng tập hồ sơ để lật lại cả đời người.</p><div class="archive-summary">📁 TÌM THẤY <b>${lives.length}</b> HỒ SƠ ĐÃ NIÊM PHONG</div>
+ ${lives.length?`<div class="archive-list">${lives.map(l=>`<button class="archive-life-card" type="button" data-life-id="${safe(l.id)}"><span class="archive-life-icon">${l.legacy?'▤':'🪦'}</span><span class="archive-life-main"><strong>${l.lifeNumber!=null?`HỒ SƠ #${String(l.lifeNumber).padStart(3,'0')} · `:''}${safe(l.name)}</strong><small>${whole(l.age)} tuổi · IQ ${whole(l.iq)} · ${money(l.cash)}</small><small>${safe(l.reason||'Chưa rõ nguyên nhân')}</small></span><span class="archive-life-tail">${l.legacy?'BẢN CŨ':`${l.historyCount||0} TIN`} →</span></button>`).join('')}</div>`:'<div class="empty-state">Chưa có kiếp nào được lưu. Kiếp này kết thúc, hồ sơ sẽ nằm ở đây.</div>'}
+ <p class="archive-footnote">${isOnlineBoard()?'Dữ liệu gắn với phiên khách trên server. Xóa cookie có thể mất quyền truy cập hồ sơ.':'Bản offline lưu trong trình duyệt, không nên xóa dữ liệu trang.'}</p>`;
 }
 function archiveDetailHTML(id){
-  const life=getArchivedLife(id);
-  if(!life)return `<div class="modal-topline"><div class="modal-kicker">KIẾP KHÔNG TÌM THẤY</div><button class="close-button" data-command="archive" aria-label="Quay lại">×</button></div><p>Không tìm thấy nhật ký này trong bộ nhớ trình duyệt.</p>`;
-  const history=life.history||[];
-  let lastAge=null;
-  const timeline=history.map(entry=>{
-    const age=Number(entry.age)||0;
-    const heading=age!==lastAge?`<div class="archive-age-heading" id="archive-age-${age}">✦ Năm ${age} tuổi</div>`:'';
-    lastAge=age;
-    return `${heading}<div class="archive-event"><span class="archive-event-type">${entry.type==='death'?'🪦':entry.type==='bad'?'💥':entry.type==='good'?'✨':'📌'}</span><span>${escapeHTML(entry.text)}</span></div>`;
-  }).join('');
-  const ages=[...new Set(history.map(e=>Number(e.age)||0))];
-  return `<div class="modal-topline"><button class="archive-back" data-command="archive" type="button">← Tất cả kiếp</button><button class="close-button" data-command="close" aria-label="Đóng">×</button></div>
-    <div class="modal-kicker">${life.lifeNumber!=null?`KIẾP #${String(life.lifeNumber).padStart(3,'0')}`:'HỒ SƠ KIẾP CŨ'}</div>
-    <h2>🪦 ${escapeHTML(life.name||'Vô danh')}</h2>
-    <div class="archive-metrics"><div><span>Tuổi thọ</span><strong>${Number(life.age)||0} tuổi</strong></div><div><span>Đỉnh IQ</span><strong>${Number(life.peakIQ??life.iq)||0}</strong></div><div><span>Tài sản</span><strong>${formatMoney(Number(life.cash)||0)} ₫</strong></div></div>
-    <div class="archive-death"><strong>☠️ Nguyên nhân chết</strong><span>${escapeHTML(life.reason||'Không rõ')}</span></div>
-    ${life.legacy?'<div class="archive-warning">⚠️ Đây là thành tích từ phiên bản cũ. Trước bản cập nhật này game chưa lưu riêng nhật ký sau khi đầu thai, nên chỉ lấy lại được thông tin còn trong bảng xếp hạng.</div>':`<div class="archive-more">💼 ${escapeHTML(life.job||'Không rõ')} · 🧠 IQ gốc ${Number(life.birthIQ)||0} · ❤️ Sức khỏe ${Number(life.health)||0} · 🤝 EQ ${Number(life.eq)||0}<div>🏡 ${escapeHTML(life.house||'Không rõ')} · 💍 ${escapeHTML(life.marriage||'Không rõ')} · 👶 ${Number(life.children)||0} con</div></div>`}
-    <div class="archive-timeline-header"><h3>📖 Toàn bộ nhật ký (${history.length} sự kiện)</h3>
-    ${ages.length>0?`<label class="archive-jump-label">Tới tuổi <select id="archive-age-select" aria-label="Chuyển đến tuổi">${ages.map(age=>`<option value="${age}">${age}</option>`).join('')}</select></label>`:''}</div>
-    <div class="archive-timeline" id="archive-timeline">${timeline||'<div class="empty-state">Không có sự kiện nào được lưu cho kiếp này.</div>'}</div>
-    ${!life.legacy?`<button class="full-button" data-command="export-life" data-life-id="${escapeHTML(life.id)}">⬇️ Tải nhật ký kiếp này (.txt)</button>`:''}`;
+ const life=getArchivedLife(id);
+ if(!life)return `<div class="modal-topline"><span class="modal-kicker">HỒ SƠ KHÔNG TÌM THẤY</span><button class="close-button" data-command="archive">×</button></div><p>Chưa tìm được nội dung kiếp này.</p>`;
+ const history=life.history||[];let lastAge=null;
+ const timeline=history.map(e=>{const age=whole(e.age),heading=age!==lastAge?`<div class="archive-age-heading" id="archive-age-${age}">NĂM ${age} TUỔI</div>`:'';lastAge=age;return `${heading}<div class="archive-event"><span>${postInfo(postType(e)).symbol}</span><span>${safe(e.text)}</span></div>`;}).join('');
+ const ages=[...new Set(history.map(e=>whole(e.age)))];
+ return `<div class="modal-topline"><button class="archive-back" data-command="archive">← TỦ HỒ SƠ</button><button class="close-button" data-command="close" aria-label="Đóng">×</button></div><div class="modal-kicker">HỒ SƠ NIÊM PHONG / ${life.lifeNumber!=null?'KIẾP #'+String(life.lifeNumber).padStart(3,'0'):'KIẾP CŨ'}</div><h2>${safe(life.name||'Vô danh')}</h2>
+ <div class="archive-metrics"><div><span>HƯỞNG DƯƠNG</span><strong>${whole(life.age)} tuổi</strong></div><div><span>IQ CAO NHẤT</span><strong>${whole(life.peakIQ??life.iq)}</strong></div><div><span>TIỀN MẶT</span><strong>${money(life.cash)}</strong></div></div>
+ <div class="archive-death"><strong>✝ NGUYÊN NHÂN CHẾT</strong><span>${safe(life.reason||'Không rõ')}</span></div>
+ ${life.legacy?'<div class="archive-warning">Hồ sơ cũ không có nhật ký đầy đủ vì phiên bản trước chưa lưu phần này.</div>':`<div class="archive-more">💼 ${safe(life.job||'Không rõ')} · IQ GỐC ${whole(life.birthIQ)} · EQ ${whole(life.eq)} · SỨC KHỎE ${whole(life.health)}<div>🏠 ${safe(life.house||'Không rõ')} · ${safe(life.marriage||'Không rõ')} · ${whole(life.children)} con</div></div>`}
+ <div class="archive-timeline-header"><h3>NHẬT KÝ (${history.length} SỰ KIỆN)</h3>${ages.length?`<label class="archive-jump-label">NHẢY ĐẾN TUỔI <select id="archive-age-select" aria-label="Chọn tuổi trong hồi ký">${ages.map(age=>`<option value="${age}">${age}</option>`).join('')}</select></label>`:''}</div>
+ <div class="archive-timeline" id="archive-timeline">${timeline||'<div class="empty-state">Hồ sơ này không còn nhật ký.</div>'}</div>
+ ${!life.legacy?`<button class="full-button" data-command="export-life" data-life-id="${safe(life.id)}">↓ TẢI TOÀN BỘ HỒI KÝ (.TXT)</button>`:''}`;
 }
 function renderOverlay(p,view){
-  let html='';
-  const modal=view.modal;
-  if(modal==='archive')html=archiveListHTML();
-  else if(modal==='archive-detail')html=archiveDetailHTML(view.archiveId);
-  else if(p.pendingEvent&&p.alive&&!view.autoPlay){
-    const e=p.pendingEvent;
-    html=`<div class="modal-kicker">🎲 BIẾN CỐ NĂM ${p.age} TUỔI</div><h2>${escapeHTML(e.title)}</h2><p>${escapeHTML(e.description)}</p><div class="choice-stack">${e.choices.map((c,i)=>`<button type="button" class="choice-button" data-choice="${i}">${escapeHTML(c.label)}<span>${escapeHTML(c.hint||'Lựa chọn của mày sẽ tạo hậu quả.')}</span></button>`).join('')}</div>`;
-  }else if(modal==='ranking')html=rankingHTML(view);
-  else if(modal==='nickname')html=`<div class="modal-topline"><div class="modal-kicker">TÀI KHOẢN KHÁCH</div><button class="close-button" data-command="close" aria-label="Đóng">×</button></div><h2>👤 Biệt danh trên Top toàn quốc</h2><p>Không cần email hay mật khẩu. Biệt danh này được gắn với các thành tích khi mày chết. Đổi máy hoặc xóa cookie có thể mất quyền quản lý hồ sơ khách.</p><form id="nickname-form"><label for="new-nickname">Biệt danh (2–24 ký tự)</label><input id="new-nickname" class="name-input" maxlength="24" minlength="2" required value="${escapeHTML(view.nickname||'Khách')}"/><button type="submit" class="full-button">Lưu biệt danh</button></form>`;
-  else if(modal==='rename')html=`<div class="modal-topline"><div class="modal-kicker">ĐỔI TÊN NHÂN VẬT</div><button class="close-button" data-command="close" aria-label="Đóng">×</button></div><h2>Mày muốn được gọi là gì?</h2><p>Đổi tên thoải mái. Còn nhà giàu hay nghèo thì số phận chọn.</p><form id="name-form"><label for="new-name" style="display:block;margin-bottom:8px;font-size:12px;color:#b9c8da">Tên nhân vật</label><input id="new-name" class="name-input" maxlength="30" value="${escapeHTML(p.name)}" required minlength="2" autofocus /><button type="submit" class="full-button">Lưu tên mới</button></form>`;
-  else if(!p.alive)html=`<div class="modal-kicker">🪦 KIẾP #${String(p.lifeNumber).padStart(3,'0')} ĐÃ KHÉP LẠI</div><h2>GAME OVER — Hết một đời!</h2><p>${escapeHTML(p.deathReason)} Mày đã được ghi tên vào các bảng xếp hạng. Không hồi sinh, không quảng cáo cứu mạng.</p>
-    <div class="rank-item"><div class="rank-info"><strong>${escapeHTML(p.name)}</strong><small>${p.job} · ${p.age} năm trên cõi đời</small></div><div class="rank-score">${formatMoney(p.cash+p.invested)} ₫<br/>🧂 ${p.absurdity} điểm<br/>🧠 ${p.peakIQ??p.intellect} IQ</div></div>
-    ${view.online&&view.ranks?`<div class="rank-item"><div class="rank-info"><strong>🌏 THỨ HẠNG TOÀN QUỐC</strong><small>💰 Giàu #${view.ranks.rich} · 🧠 IQ #${view.ranks.iq} · 🦕 Tuổi #${view.ranks.old} · 🧂 Trái ngang #${view.ranks.absurd}</small></div></div>`:''}
-    <button class="full-button" data-command="archive-detail" data-life-id="${escapeHTML(p.id)}">📜 ĐỌC LẠI TOÀN BỘ KIẾP NÀY</button><button class="full-button sub-button" data-command="rebirth">👶 ĐẦU THAI KIẾP MỚI (RANDOM 100%)</button><button class="full-button sub-button" data-command="ranking">🏆 Xem bảng xếp hạng</button>`;
-  if(html){$('overlay-root').innerHTML=`<div class="modal-shade"><div class="modal ${modal==='archive'||modal==='archive-detail'?'archive-modal':''}" role="dialog" aria-modal="true">${html}</div></div>`;}
-  else $('overlay-root').innerHTML='';
+ let html='',modal=view.modal,cls='';
+ if(modal==='archive'){html=archiveListHTML();cls='archive-modal';}
+ else if(modal==='archive-detail'){html=archiveDetailHTML(view.archiveId);cls='archive-modal';}
+ else if(modal==='ranking'){html=rankingHTML(view);cls='ranking-modal';}
+ else if(modal==='nickname')html=`<div class="modal-topline"><div class="modal-kicker">PHIẾU CẤP BIỆT DANH KHÁCH</div><button class="close-button" data-command="close" aria-label="Đóng">×</button></div><h2>ĐẶT BIỆT DANH</h2><p>Không cần email hay mật khẩu. Biệt danh được ghi kèm các thành tích trên Top. Đổi máy hoặc xóa cookie có thể mất Guest ID.</p><form id="nickname-form"><label for="new-nickname">BIỆT DANH (2–24 KÝ TỰ)</label><input id="new-nickname" class="name-input" maxlength="24" minlength="2" required value="${safe(view.nickname||'Khách')}"/><button type="submit" class="full-button">KÝ TÊN & LƯU</button></form>`;
+ else if(modal==='rename')html=`<div class="modal-topline"><div class="modal-kicker">ĐƠN ĐỔI TÊN NHÂN VẬT</div><button class="close-button" data-command="close" aria-label="Đóng">×</button></div><h2>ĐỔI TÊN TRÊN SỔ ĐỜI</h2><p>Được đổi tên, không được đổi số phận.</p><form id="name-form"><label for="new-name">HỌ VÀ TÊN</label><input id="new-name" class="name-input" maxlength="30" minlength="2" required value="${safe(p.name)}"/><button type="submit" class="full-button">XÁC NHẬN TÊN</button></form>`;
+ else if(!p.alive){cls='death-modal';html=`<div class="death-border"><div class="modal-kicker">PHÒNG QUẢN LÝ KIẾP SỐ · CÁO PHÓ ${String(whole(p.lifeNumber)).padStart(3,'0')}</div><span class="death-illustration">✝</span><h2>THÔNG BÁO<br/>HẾT KIẾP</h2><p class="death-name">${safe(p.name)}</p><p class="death-age">HƯỞNG DƯƠNG ${whole(p.age)} TUỔI</p>${stamp('ĐÃ NGỎM','stamp-death')}<p class="death-reason">${safe(p.deathReason||'Số đã tận.')}</p>
+ <div class="obituary-stats"><div><small>TÀI SẢN</small><strong>${money((p.cash||0)+(p.invested||0))}</strong></div><div><small>ĐỈNH IQ</small><strong>${whole(p.peakIQ??p.intellect)}</strong></div><div><small>ĐỘ TRÁI NGANG</small><strong>${whole(p.absurdity)}</strong></div></div>
+ ${view.online&&view.ranks?`<p class="obituary-rank">🌏 THỨ HẠNG TOÀN QUỐC: GIÀU #${view.ranks.rich??'—'} · IQ #${view.ranks.iq??'—'} · TUỔI #${view.ranks.old??'—'} · TRÁI NGANG #${view.ranks.absurd??'—'}</p>`:''}
+ <div class="obituary-buttons"><button class="full-button" data-command="archive-detail" data-life-id="${safe(p.id)}">▤ ĐỌC HỒI KÝ KIẾP NÀY</button><button class="full-button" data-command="rebirth">✳ ĐẦU THAI KIẾP MỚI</button><button class="full-button sub-button" data-command="ranking">★ XEM BẢNG VÀNG TOÀN QUỐC</button><button class="full-button sub-button" data-command="share-life">↗ KHOE THÀNH TÍCH KIẾP NÀY</button></div><p class="death-bottom">KHÔNG HỒI SINH · KHÔNG BÁN GIA CẢNH · KHÔNG KHIẾU NẠI</p></div>`;}
+ else if(p.pendingEvent&&!view.autoPlay){const e=p.pendingEvent;cls='choice-modal';html=`<div class="modal-kicker">📌 PHIẾU XỬ LÝ BIẾN CỐ — NĂM ${whole(p.age)} TUỔI</div><h2>${safe(e.title)}</h2><p>${safe(e.description)}</p><div class="choice-stack">${(e.choices||[]).map((c,i)=>`<button type="button" class="choice-button" data-choice="${i}"><strong>${safe(c.label)}</strong><span>${safe(c.hint||'Quyết định sẽ để lại hậu quả.')}</span></button>`).join('')}</div><div class="choice-footer">CHỈ CHẾ ĐỘ THỦ CÔNG MỚI HIỆN PHIẾU NÀY.</div>`;}
+ $('overlay-root').innerHTML=html?`<div class="modal-shade"><div class="modal ${cls}" role="dialog" aria-modal="true" aria-label="${cls==='choice-modal'?'Lựa chọn biến cố':'Hồ sơ kiếp số'}">${html}</div></div>`:'';
 }
 export function render(state,view){
-  renderStats(state.player);renderActions(state);renderProperty(state.player,view.autoPlay);renderJournal(state.player);
-  $('life-count').textContent=`KIẾP #${String(state.player.lifeNumber).padStart(3,'0')}`;
-  const status=$('online-status'), guest=$('guest-name');
-  if(status){status.textContent=view.online?'🌏 Top toàn quốc':'🏠 Chơi offline';status.classList?.toggle('connected',!!view.online);}
-  if(guest)guest.textContent=view.online?(view.nickname||'Khách'):'Cục bộ';
-  renderOverlay(state.player,view);
+ const p=state.player;
+ renderStats(p,view);renderProperty(p,view.autoPlay);renderActions(state);renderJournal(p,view);renderOverlay(p,view);
+ $('life-count').textContent=`KIẾP #${String(whole(p.lifeNumber)).padStart(3,'0')}`;
+ const status=$('online-status'),guest=$('guest-name');
+ if(status){status.textContent=view.online?'● TOP TOÀN QUỐC':'● BẢN OFFLINE';status.classList?.toggle('connected',Boolean(view.online));}
+ if(guest)guest.textContent=view.online?(view.nickname||'Khách'):'Cục bộ';
 }
 export function toast(message){
-  const target=$('toast-root');target.innerHTML=`<div class="toast">${escapeHTML(message)}</div>`;
-  clearTimeout(toast.timer);toast.timer=setTimeout(()=>{target.innerHTML=''},2500);
+ const target=$('toast-root');if(!target)return;
+ target.innerHTML=`<div class="toast">${safe(message)}</div>`;
+ clearTimeout(toast.timer);toast.timer=setTimeout(()=>target.innerHTML='',2700);
 }
