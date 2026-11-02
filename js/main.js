@@ -5,7 +5,7 @@ import {archiveLife,getArchivedLife,setServerArchives,setServerLife} from './lif
 
 const ONLINE=typeof location!=='undefined' && /^https?:$/.test(location.protocol);
 let state=ONLINE?null:loadGame();
-let view={modal:null,rankTab:'rich',archiveId:null,online:false,nickname:'',ranks:null,feedFilter:'all',dossierExpanded:false};
+let view={modal:null,rankTab:'rich',archiveId:null,online:false,nickname:'',ranks:null,feedFilter:'all',feedPage:1,dossierExpanded:false};
 let runId=null,revision=0,busy=false,autoTimer=null,autoRunning=false;
 const AUTO_YEAR_INTERVAL_MS=5000;
 
@@ -125,7 +125,15 @@ document.addEventListener('click',async event=>{
   const choice=event.target.closest('[data-choice]');
   if(choice){const result=await command('choice',{index:Number(choice.dataset.choice)});if(result.ok)view.modal=null;paint();return;}
   const feedFilter=event.target.closest('[data-feed-filter]');
-  if(feedFilter){view.feedFilter=feedFilter.dataset.feedFilter;paint();return;}
+  if(feedFilter){view.feedFilter=feedFilter.dataset.feedFilter;view.feedPage=1;paint();return;}
+  const feedPage=event.target.closest('[data-feed-page]');
+  if(feedPage){
+    // Page 1 luôn mới nhất; các trang tiếp theo là lịch sử cũ hơn.
+    view.feedPage=Math.max(1,(view.feedPage||1)+(feedPage.dataset.feedPage==='next'?1:-1));
+    paint();
+    document.getElementById('journal-panel')?.scrollIntoView({behavior:'instant',block:'start'});
+    return;
+  }
   const tab=event.target.closest('[data-tab]');
   if(tab){if(state.player.pendingEvent)return;
     // Switching tabs is only a presentation concern; action POST still specifies its category.
@@ -173,7 +181,7 @@ document.addEventListener('click',async event=>{
   if(id==='close'){view.modal=null;paint();return;}
   if(id==='rebirth'){
     stopAutoYear();const result=await command('rebirth');
-    if(result.ok){view.modal=null;view.rankTab='rich';view.archiveId=null;paint();toast('🍼 Kiếp mới bắt đầu. Chúc nhân phẩm khá hơn!');}return;
+    if(result.ok){view.modal=null;view.rankTab='rich';view.archiveId=null;view.feedPage=1;view.feedFilter='all';paint();toast('🍼 Kiếp mới bắt đầu. Chúc nhân phẩm khá hơn!');}return;
   }
   if(id==='journal'){document.getElementById('journal-panel')?.scrollIntoView({behavior:'smooth',block:'start'});}
 });

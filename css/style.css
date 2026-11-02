@@ -44,3 +44,16 @@ button,input,select{font:inherit}button{cursor:pointer;touch-action:manipulation
   .guest-button span,#btn-archive span{display:none}
   .guest-button,#btn-archive{width:34px;justify-content:center;text-align:center}
 }
+
+/* v0.9.1 — Bảng tin phân trang: chỉ 10 bài đăng mỗi trang, không cuộn bất tận. */
+#journal-panel{scroll-margin-top:92px}
+.feed-page-summary{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;padding:9px 16px 3px;color:#786a50;font-size:9px;font-weight:900;letter-spacing:.55px}
+.feed-pagination{margin:8px 15px 6px;padding:12px 0 9px;border-top:2px solid #aa9b7a;border-bottom:1px dashed #baad91;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:9px}
+.feed-page-button{background:#273d34;border:1px solid #1d3029;color:#f6ecd3;box-shadow:2px 2px 0 #af9f81;border-radius:2px;min-width:0;min-height:45px;padding:8px;font-size:10px;font-weight:900;letter-spacing:.4px;line-height:1.25}
+.feed-page-button:last-child{background:#a43f31;border-color:#83372c}
+.feed-page-button:not(:disabled):hover{filter:brightness(1.12)}
+.feed-page-button:disabled{background:#d9d0b9;border-color:#c4b69b;color:#978b77;box-shadow:none;opacity:.75}
+.feed-page-current{display:flex;flex-direction:column;align-items:center;white-space:nowrap;text-align:center;line-height:1.35}
+.feed-page-current strong{color:#3c3a30;font-size:11px}
+.feed-page-current small{font-size:9px;color:#8a7b65;font-weight:800}
+@media(max-width:740px){#journal-panel{scroll-margin-top:72px}.feed-pagination{margin:9px 9px 6px;gap:5px}.feed-page-button{min-height:48px;padding:7px 4px;font-size:9px}.feed-page-current strong{font-size:10px}.feed-page-current small{font-size:8px}.feed-page-summary{font-size:8px;padding:9px 11px 2px}}

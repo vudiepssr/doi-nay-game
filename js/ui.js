@@ -64,20 +64,41 @@ function renderActions(state){
 function postType(e){if(e.type==='death')return 'death';if(e.type==='bad')return 'bad';if(e.type==='good')return 'good';return 'normal';}
 function postInfo(type){return ({death:{label:'CÁO PHÓ',symbol:'✝',reaction:'HẾT CỨU',mark:'ĐÃ KẾT THÚC'},bad:{label:'DRAMA / XUI XẺO',symbol:'💥',reaction:'CAY THẬT',mark:'ĐỜI VẢ'},good:{label:'TIN VUI / HỜN ĐỜI',symbol:'✨',reaction:'VẬN ĐỎ',mark:'ĐÃ XÁC NHẬN'},normal:{label:'TIN VẶT / SỔ ĐỜI',symbol:'✳',reaction:'ĐÃ HÓNG',mark:'LƯU HỒ SƠ'}})[type];}
 function reactionScore(e,i){let hash=13;const t=String(e.text||'');for(let j=0;j<t.length;j++)hash=(hash*31+t.charCodeAt(j))%1171;return 3+((hash+i*11)%297);}
+// Phân trang ở phía giao diện: server và nhật ký gốc vẫn lưu ĐẦY ĐỦ sự kiện.
+const FEED_PAGE_SIZE=10;
 function renderJournal(p,view){
  const filter=view.feedFilter||'all';
- const all=(p.history||[]).filter(e=>filter==='all'||postType(e)===filter);
+ const records=(p.history||[]).map((entry,index)=>({entry,index}))
+   .filter(({entry})=>filter==='all'||postType(entry)===filter).reverse();
+ const total=records.length;
+ const pageCount=Math.max(1,Math.ceil(total/FEED_PAGE_SIZE));
+ const requested=Number(view.feedPage);
+ const page=Number.isSafeInteger(requested)?Math.max(1,Math.min(pageCount,requested)):1;
+ const start=(page-1)*FEED_PAGE_SIZE;
+ const visible=records.slice(start,start+FEED_PAGE_SIZE);
+ // Có thể cắt giữa một năm, nhưng không bao giờ quá 10 bài đăng mỗi trang.
  const groups=new Map();
- for(const entry of all){const key=whole(entry.age);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(entry);}
- const ages=[...groups.keys()].sort((a,b)=>b-a);
+ for(const record of visible){
+   const age=whole(record.entry.age);
+   if(!groups.has(age))groups.set(age,[]);
+   groups.get(age).push(record);
+ }
+ const pages=pageCount>1?`<nav class="feed-pagination" aria-label="Chuyển trang bảng tin">
+      <button type="button" class="feed-page-button" data-feed-page="prev" ${page===1?'disabled':''} aria-label="Trang trước, tin mới hơn">← TRANG TRƯỚC</button>
+      <span class="feed-page-current" aria-live="polite"><strong>TRANG ${page} / ${pageCount}</strong><small>${start+1}–${Math.min(start+FEED_PAGE_SIZE,total)} / ${total} TIN</small></span>
+      <button type="button" class="feed-page-button" data-feed-page="next" ${page===pageCount?'disabled':''} aria-label="Trang sau, tin cũ hơn">TRANG SAU →</button>
+    </nav>`:'';
  $('journal-panel').innerHTML=`<div class="feed-toolbar"><div><span class="feed-live-dot">●</span><b>BẢNG TIN</b><span class="muted-text">${(p.history||[]).length} tin đã lưu</span></div><span class="feed-year-chip">KIẾP #${String(whole(p.lifeNumber)).padStart(3,'0')}</span></div>
    <div class="feed-filters" role="group" aria-label="Lọc bảng tin"><button class="feed-filter ${filter==='all'?'active':''}" data-feed-filter="all" aria-pressed="${filter==='all'}">TẤT CẢ</button><button class="feed-filter ${filter==='bad'?'active':''}" data-feed-filter="bad" aria-pressed="${filter==='bad'}">💥 DRAMA</button><button class="feed-filter ${filter==='good'?'active':''}" data-feed-filter="good" aria-pressed="${filter==='good'}">✨ VẬN ĐỎ</button><button class="feed-filter ${filter==='normal'?'active':''}" data-feed-filter="normal" aria-pressed="${filter==='normal'}">📌 ĐỜI THƯỜNG</button></div>
-   ${ages.length?`<div class="feed-timeline">${ages.map((age,yearIndex)=>`<section class="year-group" aria-label="Sự kiện năm ${age} tuổi"><div class="year-divider"><span class="timeline-dot"></span><span class="year-label">NĂM ${age} TUỔI</span><span class="year-event-count">${groups.get(age).length} MẢNH ĐỜI</span></div><div class="post-stack">${groups.get(age).slice().reverse().map((entry,i)=>{
+   <div class="feed-page-summary"><span>📎 ${total} TIN ${filter==='all'?'TRONG KIẾP':'KHỚP BỘ LỌC'}</span><span>${total?`ĐANG XEM ${start+1}–${Math.min(start+FEED_PAGE_SIZE,total)}`:'CHƯA CÓ TIN'} · TỐI ĐA 10 TIN / TRANG</span></div>
+   ${visible.length?`<div class="feed-timeline">${[...groups.entries()].map(([age,entries])=>`<section class="year-group" aria-label="Sự kiện năm ${age} tuổi"><div class="year-divider"><span class="timeline-dot"></span><span class="year-label">NĂM ${age} TUỔI</span><span class="year-event-count">${entries.length} TIN TRANG NÀY</span></div><div class="post-stack">${entries.map(({entry,index})=>{
        const type=postType(entry),meta=postInfo(type);return `<article class="feed-post post-${type}"><div class="post-head"><span class="post-author-avatar">${getAvatar(p)}</span><div class="post-author"><strong>${safe(p.name)}</strong><span>Đã đăng tại kiếp #${whole(p.lifeNumber)} · ${age} tuổi</span></div><span class="post-menu" aria-hidden="true">•••</span></div>
        <div class="post-body"><div class="post-category">${meta.symbol} ${meta.label}</div><p>${safe(entry.text)}</p>${type==='death'?stamp('HẾT KIẾP','stamp-inline'):''}</div>
-       <div class="post-reactions"><span>😮 ${reactionScore(entry,i+yearIndex)} người hóng*</span><span>↪ ĐÃ GHI VÀO SỔ ĐỜI</span></div></article>`;}).join('')}</div></section>`).join('')}</div><p class="feed-end">✳ HẾT BẢNG TIN · ĐẦU KIẾP Ở ĐÂY ✳</p>`:`<div class="feed-empty">Chưa có tin nào thuộc mục này. Đời còn dài, drama chưa tới thôi.</div>`}
+       <div class="post-reactions"><span>😮 ${reactionScore(entry,index)} người hóng*</span><span>↪ ĐÃ GHI VÀO SỔ ĐỜI</span></div></article>`;}).join('')}</div></section>`).join('')}</div>`:`<div class="feed-empty">Chưa có tin nào thuộc mục này. Đời còn dài, drama chưa tới thôi.</div>`}
+   ${pages}<p class="feed-end">✳ ${page===pageCount?'HẾT BẢNG TIN · ĐẦU KIẾP Ở ĐÂY':'CÒN CHUYỆN CŨ · BẤM TRANG SAU ĐỂ XEM'} ✳</p>
    <p class="feed-disclaimer">* Phản ứng vui được tạo giả lập, không phải số người xem thật. Mỗi năm tự có 2 biến cố phụ ngoài chuyện chính.</p>`;
 }
+
 const rankNames={rich:'💰 ĐẠI GIA',old:'🦕 SỐNG DAI',absurd:'🧂 TRÁI NGANG',iq:'🧠 THẦN ĐỒNG'};
 function rankingHTML(view){
  const boards=loadBoards(),items=boards[view.rankTab]||[],national=isOnlineBoard();
