@@ -7,7 +7,7 @@ base = Path(__file__).resolve().parent
 src = (base/'index.html').read_text(encoding='utf-8')
 css = (base/'css/style.css').read_text(encoding='utf-8')
 scripts = []
-for name in ('config','player','avatar','customEvents','events','actions','leaderboard','lifeArchive','engine','ui','main'):
+for name in ('config','player','avatar','customEvents','ageSpecificEvents','events','actions','leaderboard','lifeArchive','engine','ui','main'):
     text = (base/'js'/f'{name}.js').read_text(encoding='utf-8')
     text = re.sub(r'^import\s+.*?from\s+[\'"].*?[\'"].*?;\s*$', '', text, flags=re.M)
     text = re.sub(r'\bexport\s+(?=(?:function|const|let|class|async|var)\b)', '', text)

@@ -1,4 +1,5 @@
 import {CUSTOM_AMBIENT_EVENTS,CUSTOM_CHOICE_EVENTS} from './customEvents.js';
+import {AGE_SPECIFIC_AMBIENT_EVENTS} from './ageSpecificEvents.js';
 // Sự kiện theo tuổi, có lựa chọn thực sự ảnh hưởng các chỉ số. Có thể thêm từng object độc lập.
 export const EVENTS = [
   {min:1,max:5,title:'Kẹo trên sàn nhà',description:'Một viên kẹo lăn lóc dưới gầm bàn. Mày có định kiểm tra quy tắc 5 giây?',choices:[
@@ -277,7 +278,8 @@ export const AMBIENT_EVENTS=[
 
 // Tự động ghép ngân hàng sự kiện do người chơi tự viết vào kho sự kiện mặc định.
 EVENTS.push(...CUSTOM_CHOICE_EVENTS);
-AMBIENT_EVENTS.push(...CUSTOM_AMBIENT_EVENTS);
+// Ghép ở cuối để không thay đổi chỉ số index trong save đời trước.
+AMBIENT_EVENTS.push(...CUSTOM_AMBIENT_EVENTS, ...AGE_SPECIFIC_AMBIENT_EVENTS);
 
 function weightedPick(items){
   const total=items.reduce((s,e)=>s+(e.weight??1),0);
@@ -289,7 +291,11 @@ export function randomAmbientEvents(player,count=2){
   player.recentAmbient??=[];
   const selected=[];
   for(let i=0;i<count;i++){
+    // Từ 1 đến 10 tuổi, ưu tiên tuyệt đối tập sự kiện ĐÚNG tuổi người chơi.
+    // Hai tin trong cùng một năm không trùng nhau; từ 11 tuổi dùng kho thường.
+    const hasAgePool=AMBIENT_EVENTS.some(e=>e.ageSpecific===true&&player.age>=e.min&&player.age<=e.max);
     const valid=AMBIENT_EVENTS.filter(e=>player.age>=e.min&&player.age<=e.max&&
+      (!hasAgePool || e.ageSpecific===true)&&
       (!e.condition||e.condition(player))&&!selected.includes(AMBIENT_EVENTS.indexOf(e)));
     let candidates=valid.filter(e=>!player.recentAmbient.includes(AMBIENT_EVENTS.indexOf(e)));
     if(!candidates.length)candidates=valid;

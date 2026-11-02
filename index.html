@@ -6,6 +6,10 @@
   <meta name="theme-color" content="#101717" />
   <meta name="description" content="ĐỜI NÀY — Một kiếp người, một bảng tin đầy biến cố. Game mô phỏng cuộc đời, tranh Top IQ, tài sản và tuổi thọ toàn quốc." />
   <title>ĐỜI NÀY — Sổ đời & Bảng tin kiếp số</title>
+  <!-- Phông chữ Việt tải bất đồng bộ; nếu mất mạng vẫn dùng phông hệ thống. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&amp;family=Noto+Serif:wght@400;600;700;800;900&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'" />
   <link rel="stylesheet" href="./css/style.css" />
 </head>
 <body>
@@ -18,9 +22,9 @@
       <div class="top-actions">
         <span id="online-status" class="online-pill">ĐANG KẾT NỐI…</span>
         <span id="life-count" class="life-chip">KIẾP #001</span>
-        <button id="btn-nickname" class="ghost-button guest-button" type="button" aria-label="Đổi biệt danh khách" data-command="nickname">✎ <span id="guest-name">Khách</span></button>
-        <button id="btn-archive" class="ghost-button" type="button" aria-label="Xem hồ sơ kiếp trước" data-command="archive">▤ <span>KIẾP CŨ</span></button>
-        <button id="btn-ranking" class="ghost-button top-rank-button" type="button" aria-label="Bảng xếp hạng toàn quốc" data-command="ranking">★ <span>TOP TOÀN QUỐC</span></button>
+        <button id="btn-nickname" class="ghost-button guest-button" type="button" data-command="nickname">✎ <span id="guest-name">Khách</span></button>
+        <button id="btn-archive" class="ghost-button" type="button" data-command="archive">▤ <span>KIẾP CŨ</span></button>
+        <button id="btn-ranking" class="ghost-button top-rank-button" type="button" data-command="ranking">★ <span>TOP TOÀN QUỐC</span></button>
       </div>
     </header>
     <div class="marquee-line" aria-hidden="true"><span>✳ HỒ SƠ NHÂN PHẨM ĐÃ ĐƯỢC NIÊM PHONG</span><span>ĐẦU THAI LÀ RANDOM · KHÔNG HOÀN TIỀN</span><span>ĐÃ CHẾT LÀ HẾT KIẾP</span></div>
