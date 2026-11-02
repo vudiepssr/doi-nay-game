@@ -5,7 +5,7 @@
  * KHÔNG cần sửa engine.js, events.js hay bất cứ logic random nào.
  *
  * Hai loại:
- *  1) CUSTOM_AMBIENT_EVENTS = sự kiện tự nổ trong nhật ký; 2 lần/năm.
+ *  1) CUSTOM_AMBIENT_EVENTS = sự kiện tự nổ trong nhật ký; 1 lần/năm.
  *  2) CUSTOM_CHOICE_EVENTS  = sự kiện hiện lựa chọn mỗi năm.
  *
  * Cả 2 đều tự vào vòng quay random theo min/max tuổi.

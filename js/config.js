@@ -7,7 +7,7 @@ export const CONFIG = {
   MAX_AGE: 115,
   MAX_STAT: 100,
   MAX_IQ: 200,
-  AMBIENT_EVENTS_PER_YEAR: 2,
+  AMBIENT_EVENTS_PER_YEAR: 1,
   ACTIONS_PER_YEAR: 2,
   categories: [
     { id: 'study', label: 'Học tập & Phát triển', icon: '📖' },

@@ -96,7 +96,7 @@ function renderJournal(p,view){
        <div class="post-body"><div class="post-category">${meta.symbol} ${meta.label}</div><p>${safe(entry.text)}</p>${type==='death'?stamp('HẾT KIẾP','stamp-inline'):''}</div>
        <div class="post-reactions"><span>😮 ${reactionScore(entry,index)} người hóng*</span><span>↪ ĐÃ GHI VÀO SỔ ĐỜI</span></div></article>`;}).join('')}</div></section>`).join('')}</div>`:`<div class="feed-empty">Chưa có tin nào thuộc mục này. Đời còn dài, drama chưa tới thôi.</div>`}
    ${pages}<p class="feed-end">✳ ${page===pageCount?'HẾT BẢNG TIN · ĐẦU KIẾP Ở ĐÂY':'CÒN CHUYỆN CŨ · BẤM TRANG SAU ĐỂ XEM'} ✳</p>
-   <p class="feed-disclaimer">* Phản ứng vui được tạo giả lập, không phải số người xem thật. Mỗi năm tự có 2 biến cố phụ ngoài chuyện chính.</p>`;
+   <p class="feed-disclaimer">* Phản ứng vui được tạo giả lập, không phải số người xem thật. Mỗi năm tự có 1 biến cố phụ ngoài chuyện chính.</p>`;
 }
 
 const rankNames={rich:'💰 ĐẠI GIA',old:'🦕 SỐNG DAI',absurd:'🧂 TRÁI NGANG',iq:'🧠 THẦN ĐỒNG'};

@@ -99,7 +99,7 @@ export function advanceYear(state){
   }
   p.health=clamp(p.health-(p.age>60?rand(1,3):rand(0,2)));
   if(p.age>=18 && p.salary===0)p.happiness=clamp(p.happiness-2);
-  // Hai biến cố phụ tự diễn biến, không cần chọn đáp án.
+  // Một biến cố phụ tự diễn biến, không cần chọn đáp án.
   // Chúng chạy cả với +1 tuổi lẫn nút tự động 5 giây/năm.
   for(const event of randomAmbientEvents(p,CONFIG.AMBIENT_EVENTS_PER_YEAR)){
     applyEffects(p,event.effect||{});

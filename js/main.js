@@ -84,7 +84,7 @@ async function command(cmd,extra={}){
 }
 async function autoNextYear(){
   if(!autoRunning||busy||!state?.player?.alive)return;
-  // MỘT request server gồm qua năm + 2 biến cố phụ + bốc đáp án ngẫu nhiên.
+  // MỘT request server gồm qua năm + 1 biến cố phụ + bốc đáp án ngẫu nhiên.
   // Không render trạng thái pendingEvent ở giữa, nên không nháy popup.
   const result=await command('auto-year');
   if(!result.ok){stopAutoYear();paint();return;}

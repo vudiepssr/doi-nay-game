@@ -1,5 +1,6 @@
 import {CUSTOM_AMBIENT_EVENTS,CUSTOM_CHOICE_EVENTS} from './customEvents.js';
 import {AGE_SPECIFIC_AMBIENT_EVENTS} from './ageSpecificEvents.js';
+import {NEW_AGE_AMBIENT_EVENTS} from './newAgeEvents.js';
 // Sự kiện theo tuổi, có lựa chọn thực sự ảnh hưởng các chỉ số. Có thể thêm từng object độc lập.
 export const EVENTS = [
   {min:1,max:5,title:'Kẹo trên sàn nhà',description:'Một viên kẹo lăn lóc dưới gầm bàn. Mày có định kiểm tra quy tắc 5 giây?',choices:[
@@ -127,7 +128,7 @@ EVENTS.push(
     option('Thách trời chơi lớn','Trái ngang +8, may mắn -2',{luck:-2,happiness:-1},'⚡ Mày thách số phận và số phận cười khẩy.',8))
 );
 
-// Biến cố phụ: luôn tự random 2 chuyện/năm, không hiện modal, có ảnh hưởng chỉ số.
+// Biến cố phụ: tự random 1 chuyện/năm, không hiện modal, có ảnh hưởng chỉ số.
 // Ngôn ngữ cố tình bựa/cà khịa. Những trò gợi dục chỉ xuất hiện ở độ tuổi trưởng thành.
 const A=(min,max,text,effect={},absurdity=0,type='event',condition=null,weight=1)=>({min,max,text,effect,absurdity,type,condition,weight});
 export const AMBIENT_EVENTS=[
@@ -279,7 +280,7 @@ export const AMBIENT_EVENTS=[
 // Tự động ghép ngân hàng sự kiện do người chơi tự viết vào kho sự kiện mặc định.
 EVENTS.push(...CUSTOM_CHOICE_EVENTS);
 // Ghép ở cuối để không thay đổi chỉ số index trong save đời trước.
-AMBIENT_EVENTS.push(...CUSTOM_AMBIENT_EVENTS, ...AGE_SPECIFIC_AMBIENT_EVENTS);
+AMBIENT_EVENTS.push(...CUSTOM_AMBIENT_EVENTS, ...AGE_SPECIFIC_AMBIENT_EVENTS, ...NEW_AGE_AMBIENT_EVENTS);
 
 function weightedPick(items){
   const total=items.reduce((s,e)=>s+(e.weight??1),0);
@@ -287,12 +288,12 @@ function weightedPick(items){
   for(const e of items){r-=(e.weight??1);if(r<0)return e;}
   return items[items.length-1];
 }
-export function randomAmbientEvents(player,count=2){
+export function randomAmbientEvents(player,count=1){
   player.recentAmbient??=[];
   const selected=[];
   for(let i=0;i<count;i++){
-    // Từ 1 đến 10 tuổi, ưu tiên tuyệt đối tập sự kiện ĐÚNG tuổi người chơi.
-    // Hai tin trong cùng một năm không trùng nhau; từ 11 tuổi dùng kho thường.
+    // Từ 1 đến 18 tuổi, ưu tiên tuyệt đối tập sự kiện ĐÚNG tuổi người chơi.
+    // Một tin tự động mỗi năm; từ tuổi 19 trở đi dùng kho thường.
     const hasAgePool=AMBIENT_EVENTS.some(e=>e.ageSpecific===true&&player.age>=e.min&&player.age<=e.max);
     const valid=AMBIENT_EVENTS.filter(e=>player.age>=e.min&&player.age<=e.max&&
       (!hasAgePool || e.ageSpecific===true)&&

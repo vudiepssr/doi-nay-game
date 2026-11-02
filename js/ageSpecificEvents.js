@@ -1,6 +1,6 @@
 /**
  * SỰ KIỆN TỰ NỔ THEO ĐÚNG TUỔI (1–10)
- * Nguồn: file người dùng cung cấp — mỗi tuổi 10 tin, chọn ngẫu nhiên 2 tin/năm.
+ * Nguồn: file người dùng cung cấp — mỗi tuổi 10 tin, chọn ngẫu nhiên 1 tin/năm.
  * Không cần lựa chọn và không áp thay đổi chỉ số vì bản gốc chỉ chứa lời kể.
  * 7 câu chuyện có yếu tố tình dục liên quan trẻ nhỏ đã được thay bằng trò nghịch không mang tính tình dục.
  * Có thể chỉnh text, type, weight hoặc bổ sung effect như ở customEvents.js.
